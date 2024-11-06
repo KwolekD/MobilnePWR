@@ -27,12 +27,17 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
+import androidx.room.Room
 import com.example.mobilnepwr.ui.theme.MobilnePWRTheme
 import com.example.mobilnepwr.ImportActivity
+import com.example.mobilnepwr.database.AppDatabase
 
 class MainActivity : ComponentActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
         setContent {
             MyButtonScreen()
