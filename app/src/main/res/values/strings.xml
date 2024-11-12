@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">MobilnePWR</string>
+    <string name="app_name">Mobilne PWR</string>
+    <string name="import_title">Importowanie planu</string>
 </resources>

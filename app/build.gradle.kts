@@ -51,6 +51,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.navigation.compose)
     val room_version = "2.6.1"
 //    database
     implementation("androidx.room:room-runtime:$room_version")
@@ -61,6 +63,8 @@ dependencies {
 //    data in database
     implementation(libs.okhttp)
     implementation(libs.biweekly)
+
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
