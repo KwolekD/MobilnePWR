@@ -15,8 +15,11 @@ class CourseRepository(private val courseDao: CourseDao) {
 
     suspend fun updateItem(item: Course) = courseDao.update(item)
 
+    suspend fun clearDatabase() = courseDao.clearDatabase()
+
     suspend fun importCoursesFromIcal(ical: ICalendar)
     {
+                    courseDao.clearDatabase()
                     val events = ical.events.map { event ->
                         Course(
                             type = getType(event.summary),

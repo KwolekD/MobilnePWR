@@ -55,9 +55,6 @@ fun HomeBody(
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ){
     LazyColumn(modifier.padding(contentPadding)) {
-        items(items = coursesList) { item ->
-            Text(text = item.type + " " + item.name)
 
-        }
     }
 }

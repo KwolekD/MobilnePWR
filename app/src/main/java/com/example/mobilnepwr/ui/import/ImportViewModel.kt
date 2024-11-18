@@ -49,10 +49,9 @@ class ImportViewModel(
                     courseRepository.importCoursesFromIcal(ical)
                     dateRepository.importDatesFromIcal(ical,courseRepository.getAllItemsStream().first())
                     tempFile.delete()
-
                 }
             }
-            Log.d("import","nie succesful")
+            Log.d("import",response.message)
         }
         catch(e: Exception){
             e.message?.let { Log.e("Import", it) }

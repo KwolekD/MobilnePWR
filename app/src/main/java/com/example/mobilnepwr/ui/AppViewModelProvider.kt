@@ -7,6 +7,7 @@ import com.example.mobilnepwr.ui.home.HomeViewModel
 import com.example.mobilnepwr.ui.import.ImportViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import com.example.mobilnepwr.MobilnePWRApplication
+import com.example.mobilnepwr.ui.courses.AllCoursesViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
@@ -17,6 +18,10 @@ object AppViewModelProvider {
         initializer {
             ImportViewModel(mobilnePWRApplication().container.datesRepository,
                 mobilnePWRApplication().container.coursesRepository)
+        }
+
+        initializer {
+            AllCoursesViewModel(mobilnePWRApplication().container.coursesRepository)
         }
     }
 }
