@@ -3,29 +3,28 @@ package com.example.mobilnepwr.ui.home
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mobilnepwr.ui.AppViewModelProvider
 import com.example.mobilnepwr.R
 import com.example.mobilnepwr.data.courses.Course
-import com.example.mobilnepwr.ui.components.AppBar
-import com.example.mobilnepwr.ui.components.AppDrawer
 import com.example.mobilnepwr.ui.navigation.NavigationDestination
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.StateFlow
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -40,21 +39,66 @@ fun HomeScreen(
 ){
     val homeUiState by viewModel.homeUiState.collectAsState()
     HomeBody(
-        coursesList = homeUiState.classesList,
-        onCourseClick = {},
+        daysList = homeUiState.weekDayButtonList,
         modifier = modifier.fillMaxSize(),
+        onCourseClick = {},
         contentPadding = contentPadding)
 }
 
 
 @Composable
 fun HomeBody(
-    coursesList: List<Course>,
+    daysList: List<WeekDayButton>,
     onCourseClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ){
     LazyColumn(modifier.padding(contentPadding)) {
-
+        items(daysList){ item ->
+            DayList(
+                name = item.name,
+                onDayClick = {},
+                courseList = item.classesList,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
     }
 }
+
+@Composable
+fun DayList(
+    name: String,
+    onDayClick: () -> Unit,
+    courseList: StateFlow<List<Course>>,
+    modifier: Modifier = Modifier
+){
+    Button(
+        onClick = onDayClick,
+        colors = ButtonColors(
+            contentColor = Color.White,
+            containerColor = Color.Black,
+            disabledContentColor = Color.White,
+            disabledContainerColor = Color.Black),
+        shape = RoundedCornerShape(8.dp),
+        modifier = modifier
+            .padding(10.dp)
+    ) {
+        Text(text = name,
+            fontSize = 20.sp)
+    }
+    val courseList by courseList.collectAsState()
+
+    Column (modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally){
+        courseList.forEach{ course ->
+            Button(
+                onClick = {},
+                modifier = modifier
+            ) {
+                Text(text = course.name)
+            }
+        }
+    }
+}
+

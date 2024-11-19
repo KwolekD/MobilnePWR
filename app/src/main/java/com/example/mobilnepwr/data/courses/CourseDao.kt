@@ -37,7 +37,7 @@ interface CourseDao {
     fun getCourseByNameAndType(name: String,type: String): Flow<Course>
 
     @Transaction
-    @Query("SELECT * FROM courses WHERE courseId = :classId")
-    suspend fun getClassWithDates(classId: Int): List<CourseWithDates>
+    @Query("SELECT c.* FROM dates d JOIN courses c ON d.courseId = c.courseId Where d.date =:date")
+    fun getClassesAtDate(date: String): Flow<List<Course>>
 
 }

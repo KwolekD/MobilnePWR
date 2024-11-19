@@ -3,11 +3,11 @@ package com.example.mobilnepwr.ui
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.mobilnepwr.ui.home.HomeViewModel
 import com.example.mobilnepwr.ui.import.ImportViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import com.example.mobilnepwr.MobilnePWRApplication
 import com.example.mobilnepwr.ui.courses.AllCoursesViewModel
+import com.example.mobilnepwr.ui.home.HomeViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {

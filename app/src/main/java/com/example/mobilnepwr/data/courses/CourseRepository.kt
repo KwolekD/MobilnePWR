@@ -17,6 +17,8 @@ class CourseRepository(private val courseDao: CourseDao) {
 
     suspend fun clearDatabase() = courseDao.clearDatabase()
 
+    fun getClassesAtDate(date: String): Flow<List<Course>> = courseDao.getClassesAtDate(date)
+
     suspend fun importCoursesFromIcal(ical: ICalendar)
     {
                     courseDao.clearDatabase()
