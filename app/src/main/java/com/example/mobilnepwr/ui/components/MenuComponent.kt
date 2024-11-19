@@ -25,9 +25,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -36,9 +38,10 @@ import com.google.android.material.color.utilities.SchemeContent
 import kotlinx.coroutines.launch
 
 val items: List<MenuItem> = listOf(
-    MenuItem("import","import","import", Icons.Default.Add),
     MenuItem("home","home","home", Icons.Default.Home),
-    MenuItem("all_courses","all_courses","all_courses",Icons.Default.Menu)
+    MenuItem("all_courses","all_courses","all_courses",Icons.Default.Menu),
+    MenuItem("import","import","import", Icons.Default.Add)
+
 )
 
 

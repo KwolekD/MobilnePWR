@@ -7,6 +7,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import com.example.mobilnepwr.ui.components.AppDrawer
+import com.example.mobilnepwr.ui.course_deatails.CourseDetails
+import com.example.mobilnepwr.ui.course_deatails.CourseDetailsScreen
 import com.example.mobilnepwr.ui.courses.AllCoursesDestination
 import com.example.mobilnepwr.ui.courses.AllCoursesScreen
 import com.example.mobilnepwr.ui.home.HomeDestination
@@ -37,6 +39,9 @@ fun AppNavHost(
 
             composable(route = AllCoursesDestination.route){
                 AllCoursesScreen(contentPadding = innerPadding)
+            }
+            composable(route = CourseDetails.route){
+                CourseDetailsScreen(contentPadding = innerPadding)
             }
 
         }
