@@ -24,12 +24,13 @@ class DateRepository(private val dateDao: DateDao) {
         ical.events.forEach { event ->
             val dateTimeStart = event.dateStart.value
             val localDateTimeStart = LocalDateTime.ofInstant(dateTimeStart.toInstant(), ZoneId.systemDefault())
+            val timeStart = localDateTimeStart.toLocalTime().toString()
             val dateStart = localDateTimeStart.toLocalDate().toString()
 
 
             val dateTimeEnd = event.dateEnd.value
             val localDateTimeEnd = LocalDateTime.ofInstant(dateTimeEnd.toInstant(), ZoneId.systemDefault())
-            val dateEnd = localDateTimeEnd.toLocalDate().toString()
+            val timeEnd = localDateTimeEnd.toLocalTime().toString()
 
 
             val courseName = getName(event.summary)
@@ -41,6 +42,8 @@ class DateRepository(private val dateDao: DateDao) {
                 val date = Date(
                     courseId = courseId,
                     date = dateStart,
+                    startTime = timeStart,
+                    endTime = timeEnd,
                     attendanceStatus = AttendanceStatus.PRESENT
                 )
                 insertDate(date)

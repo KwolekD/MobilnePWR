@@ -1,5 +1,6 @@
 package com.example.mobilnepwr.ui.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -54,11 +56,12 @@ fun HomeBody(
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ){
     LazyColumn(modifier.padding(contentPadding)) {
-        items(daysList){ item ->
+        items(daysList){item ->
             DayList(
                 name = item.name,
                 onDayClick = {},
                 courseList = item.classesList,
+                show = item.clicked,
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -71,32 +74,40 @@ fun DayList(
     name: String,
     onDayClick: () -> Unit,
     courseList: StateFlow<List<Course>>,
+    show: Boolean,
     modifier: Modifier = Modifier
 ){
-    Button(
-        onClick = onDayClick,
-        colors = ButtonColors(
-            contentColor = Color.White,
-            containerColor = Color.Black,
-            disabledContentColor = Color.White,
-            disabledContainerColor = Color.Black),
-        shape = RoundedCornerShape(8.dp),
-        modifier = modifier
+//    Button(
+//        onClick = onDayClick,
+//        colors = ButtonColors(
+//            contentColor = Color.White,
+//            containerColor = Color.Black,
+//            disabledContentColor = Color.White,
+//            disabledContainerColor = Color.Black),
+//        shape = RoundedCornerShape(8.dp),
+//        modifier = modifier
+//            .padding(10.dp)
+//    ) {
+//        Text(text = name,
+//            fontSize = 20.sp)
+//    }
+    ListItem(
+        headlineContent = { Text(text = name)},
+        modifier = modifier.then(Modifier
+            .clickable { onDayClick }
             .padding(10.dp)
-    ) {
-        Text(text = name,
-            fontSize = 20.sp)
-    }
+    ))
     val courseList by courseList.collectAsState()
 
     Column (modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally){
         courseList.forEach{ course ->
-            Button(
-                onClick = {},
-                modifier = modifier
-            ) {
-                Text(text = course.name)
+            if (show){
+                ListItem(
+                    headlineContent = { Text(text = course.name)},
+                    leadingContent = { Text(text = course.type)},
+                    modifier = Modifier
+                        .clickable {  })
             }
         }
     }

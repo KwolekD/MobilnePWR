@@ -14,10 +14,10 @@ import java.util.Locale
 
 class HomeViewModel(val repository: CourseRepository): ViewModel() {
     var currentDate: LocalDate = LocalDate.now()
-    private val _homeUiState = MutableStateFlow(HomeUiState(
+    private var _homeUiState = MutableStateFlow(HomeUiState(
         weekDayButtonList = createWeekDayButtonList()
     ))
-    val homeUiState: StateFlow<HomeUiState> = _homeUiState
+    var homeUiState: StateFlow<HomeUiState> = _homeUiState
 
 
     // Funkcja tworząca listę przycisków z dniami tygodnia
@@ -62,9 +62,6 @@ data class HomeUiState(
 data class WeekDayButton(
     val name: String = "",
     val classesList: StateFlow<List<Course>> = MutableStateFlow(listOf()),
-    val clicked: Boolean = false){
-
-}
-
+    val clicked: Boolean = false)
 
 

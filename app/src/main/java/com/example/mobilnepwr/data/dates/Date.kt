@@ -27,5 +27,7 @@ data class Date(
     @PrimaryKey(autoGenerate = true) val dateId: Int = 0,
     val courseId: Int,
     val date: String,
+    val startTime: String,
+    val endTime: String,
     val attendanceStatus: AttendanceStatus
 )
