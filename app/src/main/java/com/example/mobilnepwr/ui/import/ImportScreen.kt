@@ -38,10 +38,7 @@ import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.launch
 
 
-object ImportDestination: NavigationDestination {
-    override val route = "import"
-    override val titleRes = R.string.import_title
-}
+
 
 
 @Composable

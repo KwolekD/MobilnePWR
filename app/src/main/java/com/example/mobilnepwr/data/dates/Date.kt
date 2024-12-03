@@ -5,6 +5,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.mobilnepwr.data.courses.Course
+import java.time.LocalDate
 
 enum class AttendanceStatus{
     ABSENT,
@@ -26,7 +27,7 @@ enum class AttendanceStatus{
 data class Date(
     @PrimaryKey(autoGenerate = true) val dateId: Int = 0,
     val courseId: Int,
-    val date: String,
+    val date: LocalDate,
     val startTime: String,
     val endTime: String,
     val attendanceStatus: AttendanceStatus

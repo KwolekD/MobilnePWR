@@ -20,19 +20,15 @@ import com.example.mobilnepwr.ui.courses.AllCoursesViewModel
 import com.example.mobilnepwr.ui.navigation.NavigationDestination
 import javax.security.auth.Subject
 
-object CourseDetails : NavigationDestination {
-    override val route = "course_details"
-    override val titleRes = R.string.app_name
-}
 
 
 @Composable
 fun CourseDetailsScreen(
     modifier: Modifier = Modifier,
     viewModel: AllCoursesViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    contentPadding: PaddingValues
+    contentPadding: PaddingValues = PaddingValues.Absolute()
 ){
-    val courseUiState by viewModel.courseUiState.collectAsState()
+//    val courseUiState by viewModel.courseUiState.collectAsState()
 
 
 }

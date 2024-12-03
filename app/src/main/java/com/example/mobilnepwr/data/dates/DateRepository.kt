@@ -25,7 +25,7 @@ class DateRepository(private val dateDao: DateDao) {
             val dateTimeStart = event.dateStart.value
             val localDateTimeStart = LocalDateTime.ofInstant(dateTimeStart.toInstant(), ZoneId.systemDefault())
             val timeStart = localDateTimeStart.toLocalTime().toString()
-            val dateStart = localDateTimeStart.toLocalDate().toString()
+            val dateStart = localDateTimeStart.toLocalDate()
 
 
             val dateTimeEnd = event.dateEnd.value

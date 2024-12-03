@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.example.mobilnepwr.data.courses.Course
 import com.example.mobilnepwr.data.courses.CourseDao
 import com.example.mobilnepwr.data.dates.Date
@@ -18,10 +19,14 @@ import com.example.mobilnepwr.data.notes.NoteDao
 /**
  * Database class with a singleton Instance object.
  */
-@Database(entities = [Course::class,Date::class, Image::class,
+@Database(
+    entities = [Course::class,Date::class, Image::class,
     Note::class, Deadline::class],
     version = 1,
     exportSchema = false)
+@TypeConverters(
+    Converters::class
+)
 abstract class AppDatabase: RoomDatabase(){
 
     abstract fun courseDao(): CourseDao

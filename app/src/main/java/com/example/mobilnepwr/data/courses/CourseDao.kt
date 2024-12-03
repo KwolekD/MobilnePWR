@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.example.mobilnepwr.data.relations.CourseWithDates
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 
 @Dao
 interface CourseDao {
@@ -38,6 +39,10 @@ interface CourseDao {
 
     @Transaction
     @Query("SELECT c.* FROM dates d JOIN courses c ON d.courseId = c.courseId Where d.date =:date")
-    fun getClassesAtDate(date: String): Flow<List<Course>>
+    fun getClassesAtDate(date: LocalDate): Flow<List<Course>>
+
+//    @Transaction
+//    @Query("select c.* from dates d join courses c on d.courseId = c.courseId where d.date >= ")
+//    fun getClassesForWeek
 
 }

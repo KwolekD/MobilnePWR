@@ -3,6 +3,7 @@ package com.example.mobilnepwr.data.courses
 import biweekly.ICalendar
 import biweekly.property.Summary
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 
 class CourseRepository(private val courseDao: CourseDao) {
     fun getAllItemsStream(): Flow<List<Course>> = courseDao.getAllClasses()
@@ -17,7 +18,7 @@ class CourseRepository(private val courseDao: CourseDao) {
 
     suspend fun clearDatabase() = courseDao.clearDatabase()
 
-    fun getClassesAtDate(date: String): Flow<List<Course>> = courseDao.getClassesAtDate(date)
+    fun getClassesAtDate(date: LocalDate): Flow<List<Course>> = courseDao.getClassesAtDate(date)
 
     suspend fun importCoursesFromIcal(ical: ICalendar)
     {

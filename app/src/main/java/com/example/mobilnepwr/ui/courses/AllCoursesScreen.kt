@@ -34,10 +34,6 @@ import com.example.mobilnepwr.data.courses.Course
 import com.example.mobilnepwr.ui.AppViewModelProvider
 import com.example.mobilnepwr.ui.navigation.NavigationDestination
 
-object AllCoursesDestination : NavigationDestination {
-    override val route = "all_courses"
-    override val titleRes = R.string.app_name
-}
 
 @Composable
 fun AllCoursesScreen(

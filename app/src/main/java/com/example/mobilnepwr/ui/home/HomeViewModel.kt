@@ -7,61 +7,70 @@ import com.example.mobilnepwr.data.courses.CourseRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.format.TextStyle
 import java.time.temporal.WeekFields
 import java.util.Locale
 
-class HomeViewModel(val repository: CourseRepository): ViewModel() {
-    var currentDate: LocalDate = LocalDate.now()
-    private var _homeUiState = MutableStateFlow(HomeUiState(
-        weekDayButtonList = createWeekDayButtonList()
-    ))
-    var homeUiState: StateFlow<HomeUiState> = _homeUiState
+class HomeViewModel(private val repository: CourseRepository): ViewModel() {
 
+    private val _homeUiState = MutableStateFlow(HomeUiState())
+    val homeUiState: StateFlow<HomeUiState> = _homeUiState
 
-    // Funkcja tworząca listę przycisków z dniami tygodnia
-    private fun createWeekDayButtonList(): List<WeekDayButton> {
-        // Tworzymy listę przycisków, jeden dla każdego dnia tygodnia
-        return WEEK_DAYS.mapIndexed { index, dayName ->
-            // Dla każdego dnia wyliczamy datę
-            val dayOfWeek = getFirstDayOfWeek(currentDate).plusDays(index.toLong())
-            WeekDayButton(
-                name = dayName,
-                // Pobieramy klasy dla danego dnia przy użyciu stateIn
-                classesList = getClassesForDay(dayOfWeek),
-                clicked = false
-            )
+    init {
+        initializeHomeUiState()
+    }
+
+    private fun initializeHomeUiState(startDate: LocalDate = LocalDate.now()) {
+        viewModelScope.launch {
+            val firstDayOfWeek = getFirstDayOfWeek(startDate)
+            val weekDays = (0 until 7).map { offset ->
+                val currentDay = firstDayOfWeek.plusDays(offset.toLong())
+                val courses = repository.getClassesAtDate(currentDay).first()
+                WeekDay(
+                    name = currentDay.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault()),
+                    courses = courses,
+                    isExpanded = false
+                )
+            }
+            _homeUiState.value = HomeUiState(weekDays)
         }
     }
 
-    // Funkcja do pobierania danych o klasach w postaci Flow
-    private fun getClassesForDay(date: LocalDate): StateFlow<List<Course>> {
-        return repository.getClassesAtDate(date.toString())
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+    fun onDayClick(index: Int){
+        _homeUiState.value = _homeUiState.value.copy(
+            weekDays = _homeUiState.value.weekDays.mapIndexed { i, weekDay ->
+                if (i == index) {
+                    weekDay.copy(isExpanded = !weekDay.isExpanded)
+                } else {
+                    weekDay
+                }
+            }
+        )
     }
 
-    companion object {
-        // Lista dni tygodnia
-        private val WEEK_DAYS: List<String> =
-            listOf("Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek")
+    private fun getFirstDayOfWeek(date: LocalDate): LocalDate {
+        val weekFields = WeekFields.of(Locale.getDefault())
+        return date.with(weekFields.dayOfWeek(), 1)
     }
+
+
 }
 
-fun getFirstDayOfWeek(date: LocalDate): LocalDate {
-    // Tworzymy WeekFields dla lokalizacji, w której tydzień zaczyna się od poniedziałku
-    val weekFields = WeekFields.of(Locale("pl", "PL"))  // Używamy lokalizacji PL
-    return date.with(weekFields.dayOfWeek(), 1)  // 1 oznacza poniedziałek
-}
+
 
 data class HomeUiState(
-    val weekDayButtonList: List<WeekDayButton> = listOf(),
-    val firstDayOfWeek: LocalDate = getFirstDayOfWeek(LocalDate.now())
+    val weekDays: List<WeekDay> = listOf(),
 )
 
-data class WeekDayButton(
+
+
+data class WeekDay(
     val name: String = "",
-    val classesList: StateFlow<List<Course>> = MutableStateFlow(listOf()),
-    val clicked: Boolean = false)
+    val courses: List<Course> = listOf(),
+    val isExpanded: Boolean = false
+)
 
 
