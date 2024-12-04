@@ -5,6 +5,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mobilnepwr.ui.import.ImportViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
+import androidx.lifecycle.createSavedStateHandle
 import com.example.mobilnepwr.MobilnePWRApplication
 import com.example.mobilnepwr.data.courses.Course
 import com.example.mobilnepwr.ui.course_deatails.CourseDetailsViewModel
@@ -28,7 +29,10 @@ object AppViewModelProvider {
         }
 
         initializer {
-            CourseDetailsViewModel()
+            CourseDetailsViewModel(
+                this.createSavedStateHandle(),
+                mobilnePWRApplication().container.coursesRepository
+            )
         }
     }
 }

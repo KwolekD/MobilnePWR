@@ -33,7 +33,7 @@ fun AppNavHost(
             ) {
                 HomeScreen(
                     contentPadding = innerPadding,
-                    navigateToCourseDetails = {}
+                    navigateToCourseDetails ={ navController.navigate("${CourseDetailsDestination.route}/${it}")}
                     )
             }
 
@@ -46,7 +46,9 @@ fun AppNavHost(
             composable(
                 route = AllCoursesDestination.route
             ){
-                AllCoursesScreen(contentPadding = innerPadding)
+                AllCoursesScreen(
+                    contentPadding = innerPadding,
+                    navigateToCourseDetails = {navController.navigate("${CourseDetailsDestination.route}/${it}")})
             }
 
             composable(

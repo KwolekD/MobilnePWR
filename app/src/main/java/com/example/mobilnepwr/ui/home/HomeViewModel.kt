@@ -26,7 +26,7 @@ class HomeViewModel(private val repository: CourseRepository): ViewModel() {
     private fun initializeHomeUiState(startDate: LocalDate = LocalDate.now()) {
         viewModelScope.launch {
             val firstDayOfWeek = getFirstDayOfWeek(startDate)
-            val weekDays = (0 until 7).map { offset ->
+            val weekDays = (1 until 6).map { offset ->
                 val currentDay = firstDayOfWeek.plusDays(offset.toLong())
                 val courses = repository.getClassesAtDate(currentDay).first()
                 WeekDay(

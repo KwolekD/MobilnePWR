@@ -39,13 +39,14 @@ import com.example.mobilnepwr.ui.navigation.NavigationDestination
 fun AllCoursesScreen(
     modifier: Modifier = Modifier,
     viewModel: AllCoursesViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    navigateToCourseDetails: (Int) -> Unit,
     contentPadding: PaddingValues
 ){
     val courseUiState by viewModel.courseUiState.collectAsState()
 
     AllCoursesBody(
         coursesList = courseUiState.classesList,
-        onCourseClick = {},
+        onCourseClick = navigateToCourseDetails,
         modifier = Modifier,
         contentPadding = contentPadding
     )
@@ -69,27 +70,9 @@ fun AllCoursesBody(
                 modifier = Modifier
                     .padding(3.dp)
                     .fillMaxWidth()
-                    .clickable {  }
+                    .clickable { onCourseClick(item.courseId) }
 
             )
-//                Card(
-//                    shape = CardDefaults.outlinedShape,
-//                    onClick = {onCourseClick},
-//                    modifier = Modifier
-//                        .padding(3.dp)
-//                        .fillMaxWidth()
-//                ) {
-//                    Row(
-//                        modifier = Modifier.align(Alignment.CenterHorizontally)
-//                    ) {
-//                        Text(text = item.type,
-//                            fontSize = 20.sp)
-//                        Spacer(modifier = Modifier.padding(2.dp))
-//                        Text(text = item.name,
-//                            fontSize = 20.sp)
-//                    }
-//
-//                }
                 Spacer(
                     modifier = Modifier.padding(2.dp)
                 )
