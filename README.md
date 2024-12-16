@@ -1,0 +1,1 @@
+# Mobilny PWR - dziennik mobilny
