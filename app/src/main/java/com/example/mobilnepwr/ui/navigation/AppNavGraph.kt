@@ -57,6 +57,7 @@ fun AppNavHost(
                     type = NavType.IntType
                 })
             ){
+
                 CourseDetailsScreen(contentPadding = innerPadding)
             }
 

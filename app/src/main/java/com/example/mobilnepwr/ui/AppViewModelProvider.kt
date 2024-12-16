@@ -31,7 +31,8 @@ object AppViewModelProvider {
         initializer {
             CourseDetailsViewModel(
                 this.createSavedStateHandle(),
-                mobilnePWRApplication().container.coursesRepository
+                mobilnePWRApplication().container.coursesRepository,
+                mobilnePWRApplication().container.notesRepository
             )
         }
     }
