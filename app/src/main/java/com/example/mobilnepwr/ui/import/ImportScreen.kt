@@ -48,25 +48,6 @@ fun ImportScreen(
     contentPadding: PaddingValues
 ) {
     val coroutineScope = rememberCoroutineScope()
-//    Scaffold (
-//        floatingActionButton = {
-//            LargeFloatingActionButton(
-//                onClick = {coroutineScope.launch {
-//                    viewModel.updateUiState(viewModel.importUiState.importLink,true)
-//                }},
-//                modifier = Modifier
-//                    .padding(
-//                        end = WindowInsets.safeDrawing.asPaddingValues()
-//                            .calculateEndPadding(LocalLayoutDirection.current)
-//                    )
-//            ) {
-//                Icon(
-//                    imageVector = Icons.Filled.Info,
-//                    contentDescription = "Info about import")
-//            }
-//        }
-//
-//    ){  innerPadding ->
     ImportBody(
         importUiState = viewModel.importUiState,
         onImportLinkChange = viewModel::updateUiState,

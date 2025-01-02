@@ -7,11 +7,6 @@ import androidx.room.PrimaryKey
 import com.example.mobilnepwr.data.courses.Course
 import java.time.LocalDate
 
-enum class AttendanceStatus{
-    ABSENT,
-    PRESENT
-}
-
 @Entity(
     tableName = "dates",
     foreignKeys = [
@@ -30,5 +25,5 @@ data class Date(
     val date: LocalDate,
     val startTime: String,
     val endTime: String,
-    val attendanceStatus: AttendanceStatus
+    val attendanceStatus: Int
 )

@@ -18,6 +18,9 @@ interface DeadlineDao {
     @Delete
     suspend fun deleteDeadline(deadline: Deadline)
 
+    @Query("SELECT * FROM deadlines WHERE courseId = :courseId")
+    fun getDeadlinesByCourseId(courseId: Int): Flow<List<Deadline>>
+
     @Query("SELECT * FROM deadlines WHERE deadlineId = :deadlineId")
     fun getDeadline(deadlineId: Int): Flow<Deadline>
 

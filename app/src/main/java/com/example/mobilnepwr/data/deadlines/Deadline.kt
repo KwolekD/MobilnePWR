@@ -10,5 +10,5 @@ data class Deadline(
     val courseId: Int,
     val title: String,
     val date: LocalDate,
-    val note: String
+    val description: String
 )

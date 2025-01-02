@@ -3,7 +3,7 @@ package com.example.mobilnepwr.data.notes
 
 import kotlinx.coroutines.flow.Flow
 
-class OfflineNoteRepository(val noteDao: NoteDao){
+class NoteRepository(val noteDao: NoteDao) {
     fun getAllItemsStream(): Flow<List<Note>> = noteDao.getAllNotes()
 
     fun getItemStream(id: Int): Flow<Note?> = noteDao.getNote(id)
@@ -13,4 +13,6 @@ class OfflineNoteRepository(val noteDao: NoteDao){
     suspend fun deleteItem(item: Note) = noteDao.deleteNote(item)
 
     suspend fun updateItem(item: Note) = noteDao.updateNote(item)
+    suspend fun getNotesByCourseId(courseId: Int): Flow<List<Note>> =
+        noteDao.getNotesByCourseId(courseId)
 }

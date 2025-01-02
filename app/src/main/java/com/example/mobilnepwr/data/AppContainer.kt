@@ -5,17 +5,17 @@ import com.example.mobilnepwr.data.courses.CourseRepository
 import com.example.mobilnepwr.data.dates.DateRepository
 import com.example.mobilnepwr.data.deadlines.DeadlineRepository
 import com.example.mobilnepwr.data.images.ImageRepository
-import com.example.mobilnepwr.data.notes.OfflineNoteRepository
+import com.example.mobilnepwr.data.notes.NoteRepository
 
 interface AppContainer {
     val coursesRepository: CourseRepository
     val datesRepository: DateRepository
     val deadlinesRepository: DeadlineRepository
     val imagesRepository: ImageRepository
-    val notesRepository: OfflineNoteRepository
+    val notesRepository: NoteRepository
 }
 
-class AppDataContainer(private val context: Context): AppContainer {
+class AppDataContainer(private val context: Context) : AppContainer {
     override val datesRepository: DateRepository by lazy {
         DateRepository(AppDatabase.getDatabase(context).dateDao())
     }
@@ -23,8 +23,8 @@ class AppDataContainer(private val context: Context): AppContainer {
         CourseRepository(AppDatabase.getDatabase(context).courseDao())
     }
 
-    override val notesRepository: OfflineNoteRepository by lazy {
-        OfflineNoteRepository(AppDatabase.getDatabase(context).noteDao())
+    override val notesRepository: NoteRepository by lazy {
+        NoteRepository(AppDatabase.getDatabase(context).noteDao())
     }
     override val imagesRepository: ImageRepository by lazy {
         ImageRepository(AppDatabase.getDatabase(context).imageDao())

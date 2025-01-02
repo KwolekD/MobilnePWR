@@ -18,18 +18,21 @@ class DateRepository(private val dateDao: DateDao) {
     suspend fun deleteDate(item: Date) = dateDao.deleteDate(item)
 
     suspend fun updateDate(item: Date) = dateDao.updateDate(item)
+    suspend fun getDatesByCourseId(courseId: Int): Flow<List<Date>> =
+        dateDao.getDatesByCourseId(courseId)
 
     suspend fun importDatesFromIcal(ical: ICalendar, courses: List<Course>) {
-        // Mapowanie eventów do listy dat
         ical.events.forEach { event ->
             val dateTimeStart = event.dateStart.value
-            val localDateTimeStart = LocalDateTime.ofInstant(dateTimeStart.toInstant(), ZoneId.systemDefault())
+            val localDateTimeStart =
+                LocalDateTime.ofInstant(dateTimeStart.toInstant(), ZoneId.systemDefault())
             val timeStart = localDateTimeStart.toLocalTime().toString()
             val dateStart = localDateTimeStart.toLocalDate()
 
 
             val dateTimeEnd = event.dateEnd.value
-            val localDateTimeEnd = LocalDateTime.ofInstant(dateTimeEnd.toInstant(), ZoneId.systemDefault())
+            val localDateTimeEnd =
+                LocalDateTime.ofInstant(dateTimeEnd.toInstant(), ZoneId.systemDefault())
             val timeEnd = localDateTimeEnd.toLocalTime().toString()
 
 
@@ -44,17 +47,18 @@ class DateRepository(private val dateDao: DateDao) {
                     date = dateStart,
                     startTime = timeStart,
                     endTime = timeEnd,
-                    attendanceStatus = AttendanceStatus.PRESENT
+                    attendanceStatus = 1
                 )
                 insertDate(date)
             }
         }
     }
-    private fun getType(summary: Summary): String{
+
+    private fun getType(summary: Summary): String {
         return summary.value.split(" ").first()
     }
 
-    private fun getName(summary: Summary): String{
+    private fun getName(summary: Summary): String {
         return summary.value.split(" ").drop(2).joinToString(" ")
     }
 }

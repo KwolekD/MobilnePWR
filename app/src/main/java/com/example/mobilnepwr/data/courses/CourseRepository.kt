@@ -29,7 +29,7 @@ class CourseRepository(private val courseDao: CourseDao) {
                             name = getName(event.summary),
                             address = event.location?.value ?: "",
                             building = event.description.value.split("\n")[1],
-                            hall = event.description.value.split(" ")[1]
+                            hall = event.description.value.split("\n")[0].split(" ").drop(1).joinToString(" ")
                         )
                     }
                     courseDao.insertAll(events)

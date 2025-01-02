@@ -1,17 +1,15 @@
 package com.example.mobilnepwr.ui
 
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.mobilnepwr.ui.import.ImportViewModel
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
-import androidx.lifecycle.createSavedStateHandle
 import com.example.mobilnepwr.MobilnePWRApplication
-import com.example.mobilnepwr.data.courses.Course
 import com.example.mobilnepwr.ui.course_deatails.CourseDetailsViewModel
 import com.example.mobilnepwr.ui.courses.AllCoursesViewModel
 import com.example.mobilnepwr.ui.home.HomeViewModel
-import com.example.mobilnepwr.ui.navigation.CourseDetailsDestination
+import com.example.mobilnepwr.ui.import.ImportViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
@@ -20,8 +18,10 @@ object AppViewModelProvider {
         }
 
         initializer {
-            ImportViewModel(mobilnePWRApplication().container.datesRepository,
-                mobilnePWRApplication().container.coursesRepository)
+            ImportViewModel(
+                mobilnePWRApplication().container.datesRepository,
+                mobilnePWRApplication().container.coursesRepository
+            )
         }
 
         initializer {
@@ -32,7 +32,9 @@ object AppViewModelProvider {
             CourseDetailsViewModel(
                 this.createSavedStateHandle(),
                 mobilnePWRApplication().container.coursesRepository,
-                mobilnePWRApplication().container.notesRepository
+                mobilnePWRApplication().container.notesRepository,
+                mobilnePWRApplication().container.deadlinesRepository,
+                mobilnePWRApplication().container.datesRepository
             )
         }
     }

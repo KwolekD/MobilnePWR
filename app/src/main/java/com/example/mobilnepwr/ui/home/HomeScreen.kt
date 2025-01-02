@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -43,12 +44,15 @@ fun HomeScreen(
     navigateToCourseDetails: (Int) -> Unit
 ){
     val homeUiState by viewModel.homeUiState.collectAsState()
+
     DayList(
         daysList = homeUiState.weekDays,
         modifier = modifier.fillMaxSize(),
         onCourseClick = navigateToCourseDetails,
-        onDayClick = {index -> viewModel.onDayClick(index)},
-        contentPadding = contentPadding)
+        onDayClick = viewModel::onDayClick,
+        contentPadding = contentPadding
+    )
+
 }
 
 

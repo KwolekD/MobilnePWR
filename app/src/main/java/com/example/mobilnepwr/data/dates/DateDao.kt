@@ -8,7 +8,7 @@ import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface DateDao{
+interface DateDao {
     @Insert
     suspend fun insertDate(classDateEntity: Date)
 
@@ -17,6 +17,9 @@ interface DateDao{
 
     @Update
     suspend fun updateDate(date: Date)
+
+    @Query("SELECT * FROM dates WHERE courseId = :courseId")
+    fun getDatesByCourseId(courseId: Int): Flow<List<Date>>
 
     @Query("SELECT * FROM dates WHERE dateId = :dateId")
     fun getDate(dateId: Int): Flow<Date>
