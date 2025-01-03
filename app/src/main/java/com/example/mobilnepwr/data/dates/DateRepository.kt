@@ -12,14 +12,15 @@ class DateRepository(private val dateDao: DateDao) {
     fun getAllDatesStream(): Flow<List<Date>> = dateDao.getAllDates()
 
     fun getDateStream(id: Int): Flow<Date?> = dateDao.getDate(id)
+    fun getDatesByCourseId(courseId: Int): Flow<List<Date>> =
+        dateDao.getDatesByCourseId(courseId)
 
     suspend fun insertDate(item: Date) = dateDao.insertDate(item)
 
     suspend fun deleteDate(item: Date) = dateDao.deleteDate(item)
 
     suspend fun updateDate(item: Date) = dateDao.updateDate(item)
-    suspend fun getDatesByCourseId(courseId: Int): Flow<List<Date>> =
-        dateDao.getDatesByCourseId(courseId)
+
 
     suspend fun importDatesFromIcal(ical: ICalendar, courses: List<Course>) {
         ical.events.forEach { event ->
@@ -47,7 +48,7 @@ class DateRepository(private val dateDao: DateDao) {
                     date = dateStart,
                     startTime = timeStart,
                     endTime = timeEnd,
-                    attendanceStatus = 1
+                    attendance = true
                 )
                 insertDate(date)
             }

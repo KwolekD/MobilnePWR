@@ -22,18 +22,23 @@ class ImportViewModel(
     var importUiState by mutableStateOf(ImportUiState())
         private set
 
-    fun updateUiState(importLink: String,showInfo: Boolean = false){
+    fun updateUiState(importLink: String, showInfo: Boolean = false) {
         importUiState =
             ImportUiState(
                 importLink = importLink,
-                showInfo = showInfo)
+                showInfo = showInfo
+            )
+    }
+
+    fun clickFAB() {
+        updateUiState(importUiState.importLink, showInfo = !importUiState.showInfo)
     }
 
 
     suspend fun importData() {
         val client = OkHttpClient()
         val request = Request.Builder().url(importUiState.importLink).build()
-        Log.d("import","działa")
+        Log.d("import", "działa")
         try {
             val response = withContext(Dispatchers.IO) { client.newCall(request).execute() }
             if (response.isSuccessful) {
@@ -47,13 +52,15 @@ class ImportViewModel(
                     val ical = Biweekly.parse(tempFile).first()
 
                     courseRepository.importCoursesFromIcal(ical)
-                    dateRepository.importDatesFromIcal(ical,courseRepository.getAllItemsStream().first())
+                    dateRepository.importDatesFromIcal(
+                        ical,
+                        courseRepository.getAllItemsStream().first()
+                    )
                     tempFile.delete()
                 }
             }
-            Log.d("import",response.message)
-        }
-        catch(e: Exception){
+            Log.d("import", response.message)
+        } catch (e: Exception) {
             e.message?.let { Log.e("Import", it) }
         }
     }

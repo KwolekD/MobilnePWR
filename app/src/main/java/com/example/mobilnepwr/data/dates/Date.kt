@@ -25,5 +25,5 @@ data class Date(
     val date: LocalDate,
     val startTime: String,
     val endTime: String,
-    val attendanceStatus: Int
+    val attendance: Boolean
 )

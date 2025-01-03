@@ -14,7 +14,7 @@ import com.example.mobilnepwr.data.notes.NoteRepository
 import com.example.mobilnepwr.ui.navigation.CourseDetailsDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -27,7 +27,7 @@ class CourseDetailsViewModel(
     private val dateRepository: DateRepository,
 ) : ViewModel() {
 
-    private val courseId: Int = checkNotNull(savedStateHandle[CourseDetailsDestination.courseIdArg])
+    val courseId: Int = checkNotNull(savedStateHandle[CourseDetailsDestination.courseIdArg])
 
     private val _courseUiState: MutableStateFlow<CourseDetailsUiState> =
         MutableStateFlow(CourseDetailsUiState())
@@ -36,48 +36,22 @@ class CourseDetailsViewModel(
 
     init {
         viewModelScope.launch {
-
-            courseRepository.getItemStream(courseId)
-                .filterNotNull()
-                .collect { course ->
-                    _courseUiState.update {
-                        it.copy(courseDetails = course.toCourseDetails())
-                    }
+            combine(
+                courseRepository.getItemStream(courseId),
+                deadlineRepository.getDeadlinesByCourseId(courseId),
+                notesRepository.getNotesByCourseId(courseId),
+                dateRepository.getDatesByCourseId(courseId)
+            ) { course, deadlines, notes, dates ->
+                _courseUiState.update {
+                    it.copy(
+                        courseDetails = course.toCourseDetails(),
+                        deadlinesList = deadlines.map { deadline -> deadline.toDeadlineDetails() },
+                        notesList = notes.map { note -> note.toNoteDetails() } ?: emptyList(),
+                        datesList = dates.map { date -> date.toDateDetails() } ?: emptyList()
+                    )
                 }
-
-            deadlineRepository.getDeadlinesByCourseId(courseId)
-                .filterNotNull()
-                .collect { deadlines ->
-                    _courseUiState.update {
-                        it.copy(deadlinesList = deadlines.map { deadline ->
-                            deadline.toDeadlineDetails()
-                        })
-                    }
-                }
-
-            notesRepository.getNotesByCourseId(courseId)
-                .filterNotNull()
-                .collect { notes ->
-                    _courseUiState.update {
-                        it.copy(notesList = notes.map { note ->
-                            note.toNotesDetails()
-                        })
-                    }
-                }
-
-            dateRepository.getDatesByCourseId(courseId)
-                .filterNotNull()
-                .collect { dates ->
-                    _courseUiState.update {
-                        it.copy(datesList = dates.map { date ->
-                            date.toDateDetails()
-                        })
-                    }
-                }
-
+            }.collect {}
         }
-
-
     }
 
     fun selectTab(index: Int) {
@@ -85,31 +59,18 @@ class CourseDetailsViewModel(
             currentState.copy(selectedTab = index)
         }
     }
-
-    fun addNote(title: String, content: String) {
-        val newNote = Note(
-            noteId = 0,
-            courseId = courseId,
-            title = title,
-            content = content,
-            date = LocalDate.now()
-        )
-
-        viewModelScope.launch {
-            notesRepository.insertItem(newNote)
-        }
-    }
+    
 }
 
 data class CourseDetailsUiState(
     val courseDetails: CourseDetails = CourseDetails(),
     val selectedTab: Int = 0,
-    val notesList: List<NotesDetails> = emptyList(),
+    val notesList: List<NoteDetails> = emptyList(),
     val deadlinesList: List<DeadlineDetails> = emptyList(),
     val datesList: List<DateDetails> = emptyList()
 )
 
-data class NotesDetails(
+data class NoteDetails(
     val noteId: Int = 0,
     val courseId: Int = 0,
     val title: String = "",
@@ -127,6 +88,7 @@ data class CourseDetails(
 )
 
 data class DeadlineDetails(
+    val courseId: Int = 0,
     val title: String = "",
     val description: String = "",
     val date: LocalDate = LocalDate.now()
@@ -134,7 +96,7 @@ data class DeadlineDetails(
 
 data class DateDetails(
     val date: LocalDate = LocalDate.now(),
-    val attendanceStatus: Int = 1
+    val attendance: Boolean = true
 )
 
 fun Course.toCourseDetails(): CourseDetails = CourseDetails(
@@ -146,6 +108,7 @@ fun Course.toCourseDetails(): CourseDetails = CourseDetails(
 )
 
 fun Deadline.toDeadlineDetails(): DeadlineDetails = DeadlineDetails(
+    courseId = courseId,
     title = title,
     description = description,
     date = date
@@ -153,11 +116,11 @@ fun Deadline.toDeadlineDetails(): DeadlineDetails = DeadlineDetails(
 
 fun Date.toDateDetails(): DateDetails = DateDetails(
     date = date,
-    attendanceStatus = attendanceStatus
+    attendance = attendance
 )
 
 
-fun Note.toNotesDetails(): NotesDetails = NotesDetails(
+fun Note.toNoteDetails(): NoteDetails = NoteDetails(
     title = this.title,
     content = this.content,
     date = this.date

@@ -4,47 +4,36 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeFloatingActionButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.mobilnepwr.ui.AppViewModelProvider
-import com.example.mobilnepwr.R
-import com.example.mobilnepwr.ui.navigation.NavigationDestination
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mobilnepwr.ui.AppViewModelProvider
 import kotlinx.coroutines.launch
-
-
-
 
 
 @Composable
 fun ImportScreen(
     modifier: Modifier = Modifier,
     viewModel: ImportViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    setFabOnClick: (() -> Unit) -> Unit,
     contentPadding: PaddingValues
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -64,8 +53,19 @@ fun ImportScreen(
             )
             .fillMaxWidth()
     )
+
+    LaunchedEffect(Unit) {
+        setFabOnClick {
+            viewModel.clickFAB()
+        }
+    }
     if (viewModel.importUiState.showInfo) {
-        Dialog(onDismissRequest = {viewModel.updateUiState(viewModel.importUiState.importLink,false)}) {
+        Dialog(onDismissRequest = {
+            viewModel.updateUiState(
+                viewModel.importUiState.importLink,
+                false
+            )
+        }) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -96,8 +96,6 @@ fun ImportScreen(
 }
 
 
-
-
 @Composable
 fun ImportBody(
     importUiState: ImportUiState,
@@ -117,21 +115,22 @@ fun ImportBody(
         ) {
             OutlinedTextField(
                 value = importUiState.importLink,
-                onValueChange = {onImportLinkChange(it)},
-                label = { Text("Link")},
+                onValueChange = { onImportLinkChange(it) },
+                label = { Text("Link") },
                 maxLines = 1
             )
             Button(
-                onClick = {onImportClick()},
+                onClick = { onImportClick() },
                 enabled = importUiState.importLink.isNotEmpty(), //do zmiany do wrzucenia do viemodelu chyba?
-                modifier = Modifier.fillMaxWidth())
-                {
-                    Text(
-                        text = "Importuj",
-                        color = Color.White,
-                        fontSize = 20.sp,
-                    )
-                }
+                modifier = Modifier.fillMaxWidth()
+            )
+            {
+                Text(
+                    text = "Importuj",
+                    color = Color.White,
+                    fontSize = 20.sp,
+                )
+            }
         }
 
     }
