@@ -119,7 +119,8 @@ fun CourseDetailsScreen(
 
             3 -> Dates(
                 datesList = courseUiState.datesList,
-                scaffoldViewModel = scaffoldViewModel
+                scaffoldViewModel = scaffoldViewModel,
+                viewModel = viewModel
             )
         }
     }
@@ -170,7 +171,8 @@ fun Deadlines(
 @Composable
 fun Dates(
     datesList: List<DateDetails>,
-    scaffoldViewModel: ScaffoldViewModel
+    scaffoldViewModel: ScaffoldViewModel,
+    viewModel: CourseDetailsViewModel
 ) {
     LaunchedEffect(Unit) {
         scaffoldViewModel.updateState(
@@ -194,7 +196,7 @@ fun Dates(
                     Text(text = date.date.toString(), style = MaterialTheme.typography.titleSmall)
                     Checkbox(
                         checked = date.attendance,
-                        onCheckedChange = {},
+                        onCheckedChange = { viewModel.updateCheckBox(date) },
 
                         )
                 }

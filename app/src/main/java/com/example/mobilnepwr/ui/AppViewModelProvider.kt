@@ -17,7 +17,10 @@ import com.example.mobilnepwr.ui.navigation.ScaffoldViewModel
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
-            HomeViewModel(mobilnePWRApplication().container.coursesRepository)
+            HomeViewModel(
+                mobilnePWRApplication().container.coursesRepository,
+                mobilnePWRApplication().container.datesRepository
+            )
         }
 
         initializer {

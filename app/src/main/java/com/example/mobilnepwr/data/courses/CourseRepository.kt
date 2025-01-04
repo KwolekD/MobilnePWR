@@ -10,6 +10,9 @@ class CourseRepository(private val courseDao: CourseDao) {
 
     fun getItemStream(id: Int): Flow<Course> = courseDao.getClassById(id)
 
+    fun getCoursesWithDateDetails(date: LocalDate): Flow<List<CourseWithDateDetails>> =
+        courseDao.getCoursesWithDateDetails(date)
+
     suspend fun insertItem(item: Course) = courseDao.insertClass(item)
 
     suspend fun deleteItem(item: Course) = courseDao.delete(item)

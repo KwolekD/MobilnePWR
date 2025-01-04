@@ -1,8 +1,6 @@
 package com.example.mobilnepwr.ui.home
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -10,17 +8,24 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,10 +36,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mobilnepwr.data.courses.CourseWithDateDetails
 import com.example.mobilnepwr.ui.AppViewModelProvider
-import com.example.mobilnepwr.data.courses.Course
-import kotlin.math.exp
-
 
 @Composable
 fun HomeScreen(
@@ -42,86 +45,144 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     contentPadding: PaddingValues,
     navigateToCourseDetails: (Int) -> Unit
-){
+) {
     val homeUiState by viewModel.homeUiState.collectAsState()
 
-    DayList(
-        daysList = homeUiState.weekDays,
-        modifier = modifier.fillMaxSize(),
-        onCourseClick = navigateToCourseDetails,
-        onDayClick = viewModel::onDayClick,
-        contentPadding = contentPadding
-    )
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(contentPadding)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = viewModel::previousWeek) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                    contentDescription = "Poprzedni tydzień"
+                )
+            }
 
+//            Text(
+//                text = homeUiState.currentWeekText,
+//                style = MaterialTheme.typography.bodyLarge
+//            )
+
+            IconButton(onClick = viewModel::nextWeek) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Default.ArrowForward,
+                    contentDescription = "Następny tydzień"
+                )
+            }
+        }
+
+        // Lista dni z kursami
+        Box(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            DayList(
+                daysList = homeUiState.weekDays,
+                modifier = modifier.fillMaxSize(),
+                onCourseClick = navigateToCourseDetails,
+                onDayClick = viewModel::onDayClick,
+                clickCheckBox = viewModel::clickCheckBox
+            )
+        }
+    }
 }
-
 
 @Composable
 fun DayList(
     daysList: List<WeekDay>,
     onCourseClick: (Int) -> Unit,
     onDayClick: (Int) -> Unit,
+    clickCheckBox: (CourseWithDateDetails) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
-){
-    LazyColumn(modifier.padding(contentPadding)) {
-        itemsIndexed(daysList){index,item ->
-            ListItem(
-                headlineContent = { Text(
-                    text = item.name,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center)},
-                modifier = modifier.then(Modifier
-                    .clickable { onDayClick(index) }
-                    .padding(vertical = 20.dp)
-                ))
+) {
+    LazyColumn(
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        itemsIndexed(daysList) { index, item ->
+            if (item.courses.isNotEmpty()) {
+                ListItem(
+                    headlineContent = {
+                        Text(
+                            text = item.name,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    },
+                    modifier = modifier.then(Modifier.clickable { onDayClick(index) })
+                )
+
                 CourseList(
                     onCourseClick = onCourseClick,
                     courseList = item.courses,
                     isExpanded = item.isExpanded,
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    clickCheckBox = clickCheckBox,
+                    modifier = Modifier.fillMaxWidth()
                 )
-
+            }
         }
     }
 }
-
 
 @Composable
 fun CourseList(
     onCourseClick: (Int) -> Unit,
-    courseList: List<Course>,
+    courseList: List<CourseWithDateDetails>,
     isExpanded: Boolean,
+    clickCheckBox: (CourseWithDateDetails) -> Unit,
     modifier: Modifier = Modifier
-){
+) {
     val density = LocalDensity.current
     AnimatedVisibility(
         visible = isExpanded,
-        enter = slideInVertically {
-            with(density) { -40.dp.roundToPx() }
-        } + expandVertically(
-            expandFrom = Alignment.Top
-        ) + fadeIn(initialAlpha = 0.3f),
-        exit = slideOutVertically() + shrinkVertically() + fadeOut()
+        enter = slideInVertically { with(density) { -40.dp.roundToPx() } } +
+                expandVertically(expandFrom = Alignment.Top) +
+                fadeIn(initialAlpha = 0.3f),
+        exit = slideOutVertically() +
+                shrinkVertically() +
+                fadeOut()
     ) {
-        Column (modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             if (courseList.isEmpty()) {
-                Text("nic tu nie ma")
+                Text("Nic tu nie ma")
             } else {
-                courseList.forEach { course ->
+                courseList.forEachIndexed { index, course ->
 
                     ListItem(
-                        headlineContent = { Text(text = course.name) },
-                        leadingContent = { Text(text = course.type) },
+                        headlineContent = {
+                            Text(text = course.name)
+                        },
+                        supportingContent = {
+                            Text(
+                                text = "${course.startTime} - ${course.endTime}",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        },
+                        trailingContent = {
+                            Checkbox(
+                                checked = course.attendance,
+                                onCheckedChange = { clickCheckBox(course) }
+                            )
+                        },
                         modifier = Modifier
-                            .clickable { onCourseClick(course.courseId) })
+                            .clickable { onCourseClick(course.courseId) }
+                            .padding(vertical = 4.dp)
+                    )
                 }
             }
-
-
         }
     }
 }
-

@@ -59,7 +59,12 @@ class CourseDetailsViewModel(
             currentState.copy(selectedTab = index)
         }
     }
-    
+
+    fun updateCheckBox(date: DateDetails) {
+        viewModelScope.launch {
+            dateRepository.updateDate(date.copy(attendance = !date.attendance).toDate())
+        }
+    }
 }
 
 data class CourseDetailsUiState(
@@ -80,6 +85,7 @@ data class NoteDetails(
 
 
 data class CourseDetails(
+    val courseId: Int = 0,
     val name: String = "",
     val type: String = "",
     val address: String = "",
@@ -95,11 +101,16 @@ data class DeadlineDetails(
 )
 
 data class DateDetails(
+    val dateId: Int = 0,
     val date: LocalDate = LocalDate.now(),
-    val attendance: Boolean = true
+    val attendance: Boolean = true,
+    val startTime: String = "",
+    val endTime: String = "",
+    val courseId: Int = 0
 )
 
 fun Course.toCourseDetails(): CourseDetails = CourseDetails(
+    courseId = courseId,
     name = name,
     type = type,
     address = address,
@@ -115,8 +126,22 @@ fun Deadline.toDeadlineDetails(): DeadlineDetails = DeadlineDetails(
 )
 
 fun Date.toDateDetails(): DateDetails = DateDetails(
+    dateId = dateId,
     date = date,
-    attendance = attendance
+    attendance = attendance,
+    startTime = startTime,
+    endTime = endTime,
+    courseId = courseId
+
+)
+
+fun DateDetails.toDate(): Date = Date(
+    date = date,
+    attendance = attendance,
+    courseId = courseId,
+    startTime = startTime,
+    endTime = endTime,
+    dateId = dateId
 )
 
 
