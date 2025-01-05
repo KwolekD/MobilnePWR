@@ -1,6 +1,21 @@
 <resources>
     <string name="app_name">Mobilne PWR</string>
     <string name="import_title">Importowanie planu</string>
+    <string name="all_courses_title">Wszystkie kursy</string>
+    <string name="home_title">Strona główna</string>
     <string name="add_deadline_title">Add deadline</string>
     <string name="add_note_title">Add note</string>
+    <string name="all_courses_desc">All courses</string>
+    <string name="import_desc">Import</string>
+    <string name="home_desc">Home</string>
+    <string name="course_details_title">Szczegóły</string>
+    <string name="fab_desc">FAB action</string>
+    <string name="prev_week_desc">Poprzedni tydzień</string>
+    <string name="next_week_desc">Następny tydzień</string>
+    <string name="fab_import_title">Jak znaleźć link?</string>
+    <string name="fab_import_step_1">Wejdź na stronę swojego USOSa.</string>
+    <string name="fab_import_step_2">Otwórz zakładkę MÓJ USOSWEB.</string>
+    <string name="fab_import_step_3">Kliknij PLAN ZAJĘĆ.</string>
+    <string name="fab_import_step_4">Kliknij eksportuj.</string>
+    <string name="fab_import_step_5">Skopiuj link i wklej go do aplikacji.</string>
 </resources>

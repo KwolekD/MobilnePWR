@@ -1,12 +1,19 @@
 package com.example.mobilnepwr.ui.home
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.with
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -33,12 +41,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mobilnepwr.R
 import com.example.mobilnepwr.data.courses.CourseWithDateDetails
 import com.example.mobilnepwr.ui.AppViewModelProvider
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -63,34 +74,63 @@ fun HomeScreen(
             IconButton(onClick = viewModel::previousWeek) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                    contentDescription = "Poprzedni tydzień"
+                    contentDescription = stringResource(R.string.prev_week_desc)
                 )
             }
-
-//            Text(
-//                text = homeUiState.currentWeekText,
-//                style = MaterialTheme.typography.bodyLarge
-//            )
 
             IconButton(onClick = viewModel::nextWeek) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Default.ArrowForward,
-                    contentDescription = "Następny tydzień"
+                    contentDescription = stringResource(R.string.next_week_desc)
                 )
             }
         }
-
-        // Lista dni z kursami
         Box(
             modifier = Modifier.fillMaxSize(),
         ) {
-            DayList(
-                daysList = homeUiState.weekDays,
-                modifier = modifier.fillMaxSize(),
-                onCourseClick = navigateToCourseDetails,
-                onDayClick = viewModel::onDayClick,
-                clickCheckBox = viewModel::clickCheckBox
-            )
+            println(homeUiState.animOption)
+            when (homeUiState.animOption) {
+                1, 2 ->
+                    AnimatedContent(
+                        targetState = homeUiState.weekDays,
+                        content = { weekDays ->
+                            DayList(
+                                daysList = weekDays,
+                                onCourseClick = navigateToCourseDetails,
+                                onDayClick = viewModel::onDayClick,
+                                clickCheckBox = viewModel::clickCheckBox
+                            )
+                        },
+                        transitionSpec = {
+                            when (homeUiState.animOption) {
+                                1 -> {
+                                    slideInHorizontally(initialOffsetX = { it }) + fadeIn() with
+                                            slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+                                }
+
+                                2 -> {
+                                    slideInHorizontally(initialOffsetX = { -it }) + fadeIn() with
+                                            slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
+                                }
+
+                                else -> {
+                                    fadeIn() with fadeOut()
+                                }
+                            }.using(
+                                SizeTransform(clip = false)
+                            )
+                        }, label = ""
+                    )
+
+                else ->
+                    DayList(
+                        daysList = homeUiState.weekDays,
+                        onCourseClick = navigateToCourseDetails,
+                        onDayClick = viewModel::onDayClick,
+                        clickCheckBox = viewModel::clickCheckBox
+                    )
+            }
+
         }
     }
 }
@@ -118,7 +158,14 @@ fun DayList(
                             style = MaterialTheme.typography.titleMedium
                         )
                     },
-                    modifier = modifier.then(Modifier.clickable { onDayClick(index) })
+                    modifier = modifier.then(Modifier
+                        .clickable
+                        { onDayClick(index) }
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = ShapeDefaults.Small
+                        ))
                 )
 
                 CourseList(
@@ -156,32 +203,34 @@ fun CourseList(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (courseList.isEmpty()) {
-                Text("Nic tu nie ma")
-            } else {
-                courseList.forEachIndexed { index, course ->
+            courseList.forEachIndexed { index, course ->
 
-                    ListItem(
-                        headlineContent = {
-                            Text(text = course.name)
-                        },
-                        supportingContent = {
-                            Text(
-                                text = "${course.startTime} - ${course.endTime}",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        },
-                        trailingContent = {
-                            Checkbox(
-                                checked = course.attendance,
-                                onCheckedChange = { clickCheckBox(course) }
-                            )
-                        },
-                        modifier = Modifier
-                            .clickable { onCourseClick(course.courseId) }
-                            .padding(vertical = 4.dp)
-                    )
-                }
+                ListItem(
+                    headlineContent = {
+                        Text(text = course.name)
+                    },
+                    leadingContent = {
+                        Text(
+                            text = "${course.type}."
+                        )
+                    },
+                    supportingContent = {
+                        Text(
+                            text = "${course.startTime} - ${course.endTime}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
+                    trailingContent = {
+                        Checkbox(
+                            checked = course.attendance,
+                            onCheckedChange = { clickCheckBox(course) }
+                        )
+                    },
+                    modifier = Modifier
+                        .clickable { onCourseClick(course.courseId) }
+                        .padding(vertical = 4.dp)
+                )
+
             }
         }
     }

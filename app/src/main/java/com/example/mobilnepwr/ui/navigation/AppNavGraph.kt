@@ -1,11 +1,21 @@
 package com.example.mobilnepwr.ui.navigation
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
@@ -21,6 +31,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -31,7 +44,6 @@ import androidx.navigation.navArgument
 import com.example.mobilnepwr.R
 import com.example.mobilnepwr.ui.AppViewModelProvider
 import com.example.mobilnepwr.ui.components.AppBar
-import com.example.mobilnepwr.ui.components.items
 import com.example.mobilnepwr.ui.course_deatails.CourseDetailsScreen
 import com.example.mobilnepwr.ui.course_deatails.deadline.AddDeadlineScreen
 import com.example.mobilnepwr.ui.course_deatails.note.AddNoteScreen
@@ -44,8 +56,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun AppNavHost(
     navController: NavHostController,
-    viewModel: ScaffoldViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier,
+    viewModel: ScaffoldViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -53,36 +65,47 @@ fun AppNavHost(
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
     val (onFabClick, setFabOnClick) = remember { mutableStateOf(null as (() -> Unit)?) }
-
+    val context = LocalContext.current
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet {
-                items.forEach { item ->
-                    NavigationDrawerItem(
-                        label = {
-                            Text(item.title)
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = item.icon,
-                                contentDescription = item.contentDescription
-                            )
-                        },
-                        onClick = {
-                            scope.launch {
-                                drawerState.close()
-                            }
-                            navController.navigate(item.title)
-                        },
-
-                        selected = currentRoute == item.route
+                Column {
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        modifier = Modifier.padding(16.dp),
+                        style = MaterialTheme.typography.titleLarge
                     )
+                    menu.forEach { item ->
+                        HorizontalDivider()
+                        NavigationDrawerItem(
+                            label = {
+                                Text(text = stringResource(item.titleRes))
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = item.icon,
+                                    contentDescription = stringResource(item.contentDescriptionRes)
+                                )
+                            },
+                            onClick = {
+                                scope.launch {
+                                    drawerState.close()
+                                }
+                                navController.navigate(item.route)
+                            },
 
+                            selected = currentRoute == item.route
+                        )
+
+                    }
                 }
+
             }
         },
         drawerState = drawerState,
-        scrimColor = Color.Transparent
+        scrimColor = Color.Transparent,
+        gesturesEnabled = true
     )
     {
         Scaffold(
@@ -101,13 +124,21 @@ fun AppNavHost(
                     ) {
                         Icon(
                             imageVector = uiState.iconFab,
-                            contentDescription = "FAB action",
+                            contentDescription = stringResource(R.string.fab_desc),
                             tint = Color.White
                         )
                     }
-                } else {
                 }
-            }
+            },
+            modifier = Modifier.clickable(
+                enabled = drawerState.isOpen,
+                onClick = {
+                    scope.launch {
+                        drawerState.close()
+                    }
+                },
+
+                )
 
         ) { innerPadding ->
 
@@ -127,7 +158,7 @@ fun AppNavHost(
                                     drawerState.open()
                                 }
                             },
-                            title = HomeDestination.route,
+                            title = context.getString(HomeDestination.titleRes),
                         )
                     }
                     HomeScreen(
@@ -147,7 +178,7 @@ fun AppNavHost(
                                     drawerState.open()
                                 }
                             },
-                            title = ImportDestination.route,
+                            title = context.getString(ImportDestination.titleRes),
                             iconFab = Icons.Default.Info,
                         )
                     }
@@ -168,7 +199,7 @@ fun AppNavHost(
                                     drawerState.open()
                                 }
                             },
-                            title = AllCoursesDestination.route,
+                            title = context.getString(AllCoursesDestination.titleRes),
                         )
                     }
                     AllCoursesScreen(
@@ -256,24 +287,36 @@ fun AppNavHost(
 
 }
 
-object ImportDestination : NavigationDestination {
+val menu = listOf(
+    ImportDestination,
+    HomeDestination,
+    AllCoursesDestination
+)
+
+object ImportDestination : NavigationDestination, MenuItem {
     override val route = "import"
     override val titleRes = R.string.import_title
+    override val icon = Icons.Default.KeyboardArrowDown
+    override val contentDescriptionRes = R.string.import_desc
 }
 
-object HomeDestination : NavigationDestination {
+object HomeDestination : NavigationDestination, MenuItem {
     override val route = "home"
-    override val titleRes = R.string.app_name
+    override val titleRes = R.string.home_title
+    override val icon = Icons.Default.Home
+    override val contentDescriptionRes = R.string.home_desc
 }
 
-object AllCoursesDestination : NavigationDestination {
+object AllCoursesDestination : NavigationDestination, MenuItem {
     override val route = "all_courses"
-    override val titleRes = R.string.app_name
+    override val titleRes = R.string.all_courses_title
+    override val icon = Icons.Default.Menu
+    override val contentDescriptionRes = R.string.all_courses_desc
 }
 
 object CourseDetailsDestination : NavigationDestination {
     override val route = "course_details"
-    override val titleRes = R.string.app_name
+    override val titleRes = R.string.course_details_title
     const val courseIdArg = "courseId"
     val routeWithArgs = "$route/{$courseIdArg}"
 }

@@ -21,10 +21,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mobilnepwr.R
 import com.example.mobilnepwr.ui.AppViewModelProvider
 import kotlinx.coroutines.launch
 
@@ -72,22 +74,26 @@ fun ImportScreen(
                     .height(300.dp)
                     .padding(16.dp)
             ) {
+
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = "Jak znaleźć link?",
+                        text = stringResource(R.string.fab_import_title),
                         fontSize = 18.sp,
-                        modifier = Modifier.padding(bottom = 8.dp)
+                        modifier = Modifier
+                            .padding(bottom = 8.dp)
+                            .align(Alignment.CenterHorizontally)
                     )
-                    Text("1. Wejdź na stronę swojego USOSa.")
-                    Text("2. Otwórz zakładkę MÓJ USOSWEB.")
-                    Text("3. Kliknij PLAN ZAJĘĆ.")
-                    Text("4. Kliknij eksportuj.")
-                    Text("5. Skopiuj link i wklej go do aplikacji.")
+
+                    Text(stringResource(R.string.fab_import_step_1))
+                    Text(stringResource(R.string.fab_import_step_2))
+                    Text(stringResource(R.string.fab_import_step_3))
+                    Text(stringResource(R.string.fab_import_step_4))
+                    Text(stringResource(R.string.fab_import_step_5))
                 }
             }
         }
@@ -121,8 +127,8 @@ fun ImportBody(
             )
             Button(
                 onClick = { onImportClick() },
-                enabled = importUiState.importLink.isNotEmpty(), //do zmiany do wrzucenia do viemodelu chyba?
-                modifier = Modifier.fillMaxWidth()
+                enabled = importUiState.importLink.isNotEmpty(),
+                modifier = Modifier
             )
             {
                 Text(

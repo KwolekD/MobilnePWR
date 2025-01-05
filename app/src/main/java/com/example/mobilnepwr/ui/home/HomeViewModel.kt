@@ -27,35 +27,29 @@ class HomeViewModel(
         initializeHomeUiState(day.value)
     }
 
-    private fun initializeHomeUiState(startDate: LocalDate = LocalDate.now()) {
+    private fun initializeHomeUiState(startDate: LocalDate = LocalDate.now(), animOption: Int = 0) {
         viewModelScope.launch {
             val firstDayOfWeek = getFirstDayOfWeek(startDate)
             val weekDays = (1 until 6).map { offset ->
                 val currentDay = firstDayOfWeek.plusDays(offset.toLong())
                 val courses = courseRepository.getCoursesWithDateDetails(currentDay).first()
                 WeekDay(
-                    name = when (currentDay.dayOfWeek.getDisplayName(
+                    name = currentDay.dayOfWeek.getDisplayName(
                         TextStyle.FULL,
-                        Locale.getDefault()
-                    )) {
-                        "Monday" -> "Poniedziałek"
-                        "Tuesday" -> "Wtorek"
-                        "Wednesday" -> "Środa"
-                        "Thursday" -> "Czwartek"
-                        "Friday" -> "Piątek"
-                        else -> ""
-                    },
+                        Locale("pl", "PL")
+                    ),
                     courses = courses,
                     isExpanded = false
                 )
             }
-            _homeUiState.value = HomeUiState(weekDays)
+            _homeUiState.value = HomeUiState(weekDays, animOption)
         }
     }
 
 
     fun onDayClick(index: Int) {
         _homeUiState.value = _homeUiState.value.copy(
+            animOption = 0,
             weekDays = _homeUiState.value.weekDays.mapIndexed { i, weekDay ->
                 if (i == index) {
                     weekDay.copy(isExpanded = !weekDay.isExpanded)
@@ -68,12 +62,12 @@ class HomeViewModel(
 
     fun nextWeek() {
         day.value = day.value.plusWeeks(1)
-        initializeHomeUiState(day.value)
+        initializeHomeUiState(day.value, 1)
     }
 
     fun previousWeek() {
         day.value = day.value.minusWeeks(1)
-        initializeHomeUiState(day.value)
+        initializeHomeUiState(day.value, 2)
     }
 
     fun clickCheckBox(courseWithDateDetails: CourseWithDateDetails) {
@@ -107,6 +101,7 @@ class HomeViewModel(
 
 data class HomeUiState(
     val weekDays: List<WeekDay> = listOf(),
+    val animOption: Int = 0
 )
 
 
