@@ -12,6 +12,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -168,7 +169,8 @@ fun CourseDetailsScreen(
                     photosList = courseUiState.imageList,
                     setFabOnClick = setFabOnClick,
                     onFabClick = { launcher.launch("image/*") },
-                    scaffoldViewModel = scaffoldViewModel
+                    scaffoldViewModel = scaffoldViewModel,
+                    onDeletePhoto = { image -> viewModel.deletePhoto(image) }
                 )
             }
         }
@@ -377,7 +379,8 @@ fun Photos(
     photosList: List<Image>,
     setFabOnClick: (() -> Unit) -> Unit,
     onFabClick: () -> Unit,
-    scaffoldViewModel: ScaffoldViewModel
+    scaffoldViewModel: ScaffoldViewModel,
+    onDeletePhoto: (Image) -> Unit // Dodaj callback do usuwania zdjęcia
 ) {
     LaunchedEffect(Unit) {
         setFabOnClick {
@@ -389,9 +392,12 @@ fun Photos(
             navigationIcon = Icons.Default.Clear
         )
     }
-    Text(text = "Twoje zdjęcia:", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(4.dp))
+    Text(
+        text = "Twoje zdjęcia:",
+        style = MaterialTheme.typography.titleLarge,
+        modifier = Modifier.padding(4.dp)
+    )
     LazyColumn(modifier = Modifier.padding(30.dp)) {
-
         items(photosList) { image ->
             Card(
                 modifier = Modifier
@@ -399,17 +405,29 @@ fun Photos(
                     .padding(vertical = 4.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
-                Image(
-                    painter = rememberAsyncImagePainter(model = image.filePath),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                )
+                Box(modifier = Modifier.fillMaxWidth()) {
+
+                    Image(
+                        painter = rememberAsyncImagePainter(model = image.filePath),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                    )
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = "Usuń zdjęcie",
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp)
+                            .clickable { onDeletePhoto(image) }, // Wywołanie funkcji usuwania zdjęcia
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
             }
         }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+    }
+    Spacer(modifier = Modifier.height(16.dp))
 }
 
 

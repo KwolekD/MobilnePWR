@@ -89,7 +89,11 @@ class CourseDetailsViewModel(
         }
     }
 
-    
+    fun deletePhoto(image: Image) {
+        viewModelScope.launch {
+            ImageRepository.deleteItem(image)
+        }
+    }
 }
 
 
