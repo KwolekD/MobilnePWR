@@ -54,13 +54,12 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.navigation.compose)
     val room_version = "2.6.1"
-//    database
+    // database
     implementation("androidx.room:room-runtime:$room_version")
-//    annotationProcessor("androidx.room:room-compiler:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
 
-//    data in database
+    // data in database
     implementation(libs.okhttp)
     implementation(libs.biweekly)
 
@@ -84,4 +83,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("androidx.compose.material3:material3:1.3.1")
+
+    // Coil for image loading
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }

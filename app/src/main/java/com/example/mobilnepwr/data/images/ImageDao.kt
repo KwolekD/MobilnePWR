@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import com.example.mobilnepwr.data.notes.Note
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -24,4 +25,9 @@ interface ImageDao {
 
     @Query("SELECT * FROM images")
     fun getAllImages(): Flow<List<Image>>
+
+    @Query("SELECT * FROM images WHERE courseId = :courseId")
+    fun getImageByCourseId(courseId: Int): Flow<List<Image>>
+
+
 }

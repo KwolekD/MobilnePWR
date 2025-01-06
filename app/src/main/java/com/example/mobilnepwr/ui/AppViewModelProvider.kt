@@ -15,6 +15,7 @@ import com.example.mobilnepwr.ui.courses.AllCoursesViewModel
 import com.example.mobilnepwr.ui.home.HomeViewModel
 import com.example.mobilnepwr.ui.import.ImportViewModel
 import com.example.mobilnepwr.ui.navigation.ScaffoldViewModel
+import com.example.mobilnepwr.viewmodels.ImageViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
@@ -42,7 +43,8 @@ object AppViewModelProvider {
                 mobilnePWRApplication().container.coursesRepository,
                 mobilnePWRApplication().container.notesRepository,
                 mobilnePWRApplication().container.deadlinesRepository,
-                mobilnePWRApplication().container.datesRepository
+                mobilnePWRApplication().container.datesRepository,
+                mobilnePWRApplication().container.imagesRepository
             )
         }
 

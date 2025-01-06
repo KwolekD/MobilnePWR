@@ -1,5 +1,6 @@
 package com.example.mobilnepwr.ui.course_deatails
 
+<<<<<<< Updated upstream
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
@@ -7,6 +8,12 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.with
+=======
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+>>>>>>> Stashed changes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -45,6 +52,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
+import com.example.mobilnepwr.data.images.Image
 import com.example.mobilnepwr.ui.AppViewModelProvider
 import com.example.mobilnepwr.ui.navigation.ScaffoldViewModel
 
@@ -106,6 +115,14 @@ fun CourseDetailsScreen(
             selectedTabIndex = courseUiState.selectedTab
 
         )
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent()
+        ) { uri: Uri? ->
+            uri?.let { viewModel.addPhoto(it) }
+        }
+
+        val vviewModel: CourseDetailsViewModel = viewModel(factory = AppViewModelProvider.Factory)
+        val photosList by vviewModel.photosList.collectAsState(initial = emptyList())
 
         AnimatedContent(
             targetState = courseUiState.selectedTab,
@@ -148,6 +165,20 @@ fun CourseDetailsScreen(
                 )
             }
 
+<<<<<<< Updated upstream
+=======
+            3 -> Dates(
+                datesList = courseUiState.datesList,
+                scaffoldViewModel = scaffoldViewModel,
+                viewModel = viewModel
+            )
+
+            4 -> Photos(
+                photosList = photosList,
+                onAddPhotoClick = { launcher.launch("image/*") },
+                scaffoldViewModel = scaffoldViewModel
+            )
+>>>>>>> Stashed changes
         }
 //
 //        when (courseUiState.selectedTab) {
@@ -345,39 +376,6 @@ fun Notes(
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        // Formularz do wpisywania tytułu i treści notatki
-//        Text(text = "Dodaj nową notatkę", style = MaterialTheme.typography.titleMedium)
-//
-//        OutlinedTextField(
-//            value = title,
-//            onValueChange = { title = it },
-//            label = { Text("Tytuł") },
-//            modifier = Modifier.fillMaxWidth()
-//        )
-//
-//        OutlinedTextField(
-//            value = content,
-//            onValueChange = { content = it },
-//            label = { Text("Treść") },
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(top = 8.dp)
-//        )
-//
-//        Button(
-//            onClick = {
-//                if (title.isNotBlank() && content.isNotBlank()) {
-//                    onAddNote(title, content) // Dodanie notatki
-//                    title = "" // Wyczyszczenie formularza
-//                    content = ""
-//                }
-//            },
-//            modifier = Modifier
-//                .align(Alignment.End)
-//                .padding(top = 8.dp)
-//        ) {
-//            Text("Zapisz")
-//        }
 
         // Wyświetlanie listy notatek
         Text(
@@ -409,5 +407,49 @@ fun Notes(
         }
     }
 }
+
+
+@Composable
+fun Photos(
+    photosList: List<Image>,
+    onAddPhotoClick: () -> Unit,
+    scaffoldViewModel: ScaffoldViewModel
+) {
+    LaunchedEffect(Unit) {
+        scaffoldViewModel.updateState(
+            showFab = false,
+            iconFab = Icons.Default.Add,
+            navigationIcon = Icons.Default.Clear
+        )
+    }
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(text = "Twoje zdjęcia:", style = MaterialTheme.typography.titleLarge)
+        photosList.forEach { image ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Image(
+                    painter = rememberAsyncImagePainter(model = image.filePath),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = onAddPhotoClick) {
+            Text("Dodaj zdjęcie")
+        }
+    }
+}
+
+
+
+
 
 
