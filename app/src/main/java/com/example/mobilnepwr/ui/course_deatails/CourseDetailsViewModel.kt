@@ -15,7 +15,6 @@ import com.example.mobilnepwr.data.images.ImageRepository
 import com.example.mobilnepwr.data.notes.Note
 import com.example.mobilnepwr.data.notes.NoteRepository
 import com.example.mobilnepwr.ui.navigation.CourseDetailsDestination
-import com.example.mobilnepwr.viewmodels.ImageViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -49,15 +48,15 @@ class CourseDetailsViewModel(
                 deadlineRepository.getDeadlinesByCourseId(courseId),
                 notesRepository.getNotesByCourseId(courseId),
                 dateRepository.getDatesByCourseId(courseId),
-                //ImageRepository.getImageByCourseId(courseId)
-            ) { course, deadlines, notes, dates ->
+                ImageRepository.getImageByCourseId(courseId)
+            ) { course, deadlines, notes, dates, image ->
                 _courseUiState.update {
                     it.copy(
                         courseDetails = course.toCourseDetails(),
                         deadlinesList = deadlines.map { deadline -> deadline.toDeadlineDetails() },
                         notesList = notes.map { note -> note.toNoteDetails() } ?: emptyList(),
                         datesList = dates.map { date -> date.toDateDetails() } ?: emptyList(),
-
+                        imageList = image
                     )
                 }
             }.collect {}
@@ -89,6 +88,8 @@ class CourseDetailsViewModel(
             ImageRepository.insertItem(image)
         }
     }
+
+    
 }
 
 
@@ -98,7 +99,8 @@ data class CourseDetailsUiState(
     val prevSelectedTab: Int = -1,
     val notesList: List<NoteDetails> = emptyList(),
     val deadlinesList: List<DeadlineDetails> = emptyList(),
-    val datesList: List<DateDetails> = emptyList()
+    val datesList: List<DateDetails> = emptyList(),
+    val imageList: List<Image> = emptyList()
 )
 
 data class NoteDetails(

@@ -1,6 +1,6 @@
 package com.example.mobilnepwr.data.images
 
-import com.example.mobilnepwr.data.notes.Note
+
 import kotlinx.coroutines.flow.Flow
 
 class ImageRepository(private val imageDao: ImageDao) {
@@ -13,7 +13,7 @@ class ImageRepository(private val imageDao: ImageDao) {
     suspend fun deleteItem(item: Image) = imageDao.deleteImage(item)
 
     suspend fun updateItem(item: Image) = imageDao.updateImage(item)
-    //fun getImageByCourseId(courseId: Int): Flow<List<Image>> =
-    //    ImageDao.getImageByCourseId(courseId)
+    fun getImageByCourseId(courseId: Int): Flow<List<Image>> =
+        imageDao.getImageByCourseId(courseId)
 
 }

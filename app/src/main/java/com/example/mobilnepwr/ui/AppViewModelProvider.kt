@@ -15,7 +15,7 @@ import com.example.mobilnepwr.ui.courses.AllCoursesViewModel
 import com.example.mobilnepwr.ui.home.HomeViewModel
 import com.example.mobilnepwr.ui.import.ImportViewModel
 import com.example.mobilnepwr.ui.navigation.ScaffoldViewModel
-import com.example.mobilnepwr.viewmodels.ImageViewModel
+
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {

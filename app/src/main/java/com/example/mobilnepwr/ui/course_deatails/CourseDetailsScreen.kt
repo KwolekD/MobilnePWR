@@ -1,6 +1,6 @@
 package com.example.mobilnepwr.ui.course_deatails
 
-<<<<<<< Updated upstream
+
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
@@ -8,12 +8,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.with
-=======
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
->>>>>>> Stashed changes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,6 +21,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
@@ -121,8 +121,8 @@ fun CourseDetailsScreen(
             uri?.let { viewModel.addPhoto(it) }
         }
 
-        val vviewModel: CourseDetailsViewModel = viewModel(factory = AppViewModelProvider.Factory)
-        val photosList by vviewModel.photosList.collectAsState(initial = emptyList())
+        //val vviewModel: CourseDetailsViewModel = viewModel(factory = AppViewModelProvider.Factory)
+        //val photosList by vviewModel.photosList.collectAsState(initial = emptyList())
 
         AnimatedContent(
             targetState = courseUiState.selectedTab,
@@ -163,139 +163,19 @@ fun CourseDetailsScreen(
                     scaffoldViewModel = scaffoldViewModel,
                     viewModel = viewModel
                 )
+
+                4 -> Photos(
+                    photosList = courseUiState.imageList,
+                    setFabOnClick = setFabOnClick,
+                    onFabClick = { launcher.launch("image/*") },
+                    scaffoldViewModel = scaffoldViewModel
+                )
             }
-
-<<<<<<< Updated upstream
-=======
-            3 -> Dates(
-                datesList = courseUiState.datesList,
-                scaffoldViewModel = scaffoldViewModel,
-                viewModel = viewModel
-            )
-
-            4 -> Photos(
-                photosList = photosList,
-                onAddPhotoClick = { launcher.launch("image/*") },
-                scaffoldViewModel = scaffoldViewModel
-            )
->>>>>>> Stashed changes
         }
-//
-//        when (courseUiState.selectedTab) {
-//            0 -> Details(
-//                courseUiState.courseDetails,
-//                scaffoldViewModel
-//            )
-//
-//            1 -> Notes(
-//                notesList = courseUiState.notesList,
-//                setFabOnClick = setFabOnClick,
-//                onFabClick = { navigateToAddNote(viewModel.courseId) },
-//                scaffoldViewModel = scaffoldViewModel,
-//                onEditClick = navigateToEditNote
-//            )
-//
-//            2 -> Deadlines(
-//                deadlinesList = courseUiState.deadlinesList,
-//                setFabOnClick = setFabOnClick,
-//                onFabClick = { navigateToAddDeadline(viewModel.courseId) },
-//                scaffoldViewModel = scaffoldViewModel,
-//                onTrailingIconClick = navigateToEditDeadline
-//            )
-//
-//            3 -> Dates(
-//                datesList = courseUiState.datesList,
-//                scaffoldViewModel = scaffoldViewModel,
-//                viewModel = viewModel
-//            )
-//        }
     }
 
 }
 
-@Composable
-fun Deadlines(
-    deadlinesList: List<DeadlineDetails>,
-    setFabOnClick: (() -> Unit) -> Unit,
-    onFabClick: () -> Unit,
-    onTrailingIconClick: (Int) -> Unit,
-    scaffoldViewModel: ScaffoldViewModel
-) {
-    LaunchedEffect(Unit) {
-        setFabOnClick {
-            onFabClick()
-        }
-        scaffoldViewModel.updateState(
-            showFab = true,
-            iconFab = Icons.Default.Add,
-            navigationIcon = Icons.Default.Clear
-        )
-    }
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(text = "Twoje terminy:", style = MaterialTheme.typography.titleLarge)
-        deadlinesList.forEach { deadline ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            )
-            {
-                Column(modifier = Modifier.padding(8.dp)) {
-                    Text(text = deadline.title, style = MaterialTheme.typography.titleSmall)
-                    Text(text = deadline.description, style = MaterialTheme.typography.bodyMedium)
-                    Text(
-                        text = "Data: ${deadline.date}",
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.align(Alignment.End)
-                    )
-                    Button(
-                        onClick = { onTrailingIconClick(deadline.deadlineId) }
-                    ) { }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun Dates(
-    datesList: List<DateDetails>,
-    scaffoldViewModel: ScaffoldViewModel,
-    viewModel: CourseDetailsViewModel
-) {
-    LaunchedEffect(Unit) {
-        scaffoldViewModel.updateState(
-            showFab = false,
-            navigationIcon = Icons.Default.Clear
-        )
-    }
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(text = "Twoje obecności:", style = MaterialTheme.typography.titleLarge)
-        if (datesList.isEmpty())
-            Text(text = "Brak obecności", style = MaterialTheme.typography.bodyMedium)
-        datesList.forEach { date ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Row(modifier = Modifier.padding(8.dp))
-                {
-                    Text(text = date.date.toString(), style = MaterialTheme.typography.titleSmall)
-                    Checkbox(
-                        checked = date.attendance,
-                        onCheckedChange = { viewModel.updateCheckBox(date) },
-
-                        )
-                }
-            }
-
-
-        }
-    }
-}
 
 @Composable
 fun Details(
@@ -375,13 +255,11 @@ fun Notes(
         )
     }
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(modifier = Modifier.padding(10.dp)) {
 
-        // Wyświetlanie listy notatek
         Text(
             text = "Twoje notatki:",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(top = 16.dp)
+            style = MaterialTheme.typography.titleLarge,
         )
 
         notesList.forEach { note ->
@@ -408,24 +286,113 @@ fun Notes(
     }
 }
 
-
 @Composable
-fun Photos(
-    photosList: List<Image>,
-    onAddPhotoClick: () -> Unit,
+fun Deadlines(
+    deadlinesList: List<DeadlineDetails>,
+    setFabOnClick: (() -> Unit) -> Unit,
+    onFabClick: () -> Unit,
+    onTrailingIconClick: (Int) -> Unit,
     scaffoldViewModel: ScaffoldViewModel
 ) {
     LaunchedEffect(Unit) {
+        setFabOnClick {
+            onFabClick()
+        }
         scaffoldViewModel.updateState(
-            showFab = false,
+            showFab = true,
             iconFab = Icons.Default.Add,
             navigationIcon = Icons.Default.Clear
         )
     }
+    Column(modifier = Modifier.padding(10.dp)) {
+        Text(text = "Twoje terminy:", style = MaterialTheme.typography.titleLarge)
+        deadlinesList.forEach { deadline ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            )
+            {
+                Column(modifier = Modifier.padding(8.dp)) {
+                    Text(text = deadline.title, style = MaterialTheme.typography.titleSmall)
+                    Text(text = deadline.description, style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        text = "Data: ${deadline.date}",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.align(Alignment.End)
+                    )
+                    Button(
+                        onClick = { onTrailingIconClick(deadline.deadlineId) }
+                    ) { }
+                }
+            }
+        }
+    }
+}
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(text = "Twoje zdjęcia:", style = MaterialTheme.typography.titleLarge)
-        photosList.forEach { image ->
+
+@Composable
+fun Dates(
+    datesList: List<DateDetails>,
+    scaffoldViewModel: ScaffoldViewModel,
+    viewModel: CourseDetailsViewModel
+) {
+    LaunchedEffect(Unit) {
+        scaffoldViewModel.updateState(
+            showFab = false,
+            navigationIcon = Icons.Default.Clear
+        )
+    }
+    Column(modifier = Modifier.padding(10.dp)) {
+        Text(text = "Twoje obecności:", style = MaterialTheme.typography.titleLarge)
+        if (datesList.isEmpty())
+            Text(text = "Brak obecności", style = MaterialTheme.typography.bodyMedium)
+        datesList.forEach { date ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Row(modifier = Modifier.padding(8.dp))
+                {
+                    Text(text = date.date.toString(), style = MaterialTheme.typography.titleSmall)
+                    Checkbox(
+                        checked = date.attendance,
+                        onCheckedChange = { viewModel.updateCheckBox(date) },
+
+                        )
+                }
+            }
+
+
+        }
+    }
+}
+
+
+@Composable
+fun Photos(
+    photosList: List<Image>,
+    setFabOnClick: (() -> Unit) -> Unit,
+    onFabClick: () -> Unit,
+    scaffoldViewModel: ScaffoldViewModel
+) {
+    LaunchedEffect(Unit) {
+        setFabOnClick {
+            onFabClick()
+        }
+        scaffoldViewModel.updateState(
+            showFab = true,
+            iconFab = Icons.Default.Add,
+            navigationIcon = Icons.Default.Clear
+        )
+    }
+    Text(text = "Twoje zdjęcia:", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(4.dp))
+    LazyColumn(modifier = Modifier.padding(30.dp)) {
+
+        items(photosList) { image ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -441,11 +408,8 @@ fun Photos(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onAddPhotoClick) {
-            Text("Dodaj zdjęcie")
         }
-    }
+        Spacer(modifier = Modifier.height(16.dp))
 }
 
 
