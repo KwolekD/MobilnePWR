@@ -36,29 +36,27 @@ import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddDeadlineScreen(
-    viewModel: AddDeadlineViewModel = viewModel(factory = Factory),
-    navigateBack: () -> Unit,
+fun EditDeadlineScreen(
     contentPadding: PaddingValues,
-    modifier: Modifier = Modifier
+    navigateBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: EditDeadlineViewModel = viewModel(factory = Factory),
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.editDeadlineUiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
-    AddDeadlineBody(
+    EditDeadlineBody(
         deadlineDetails = uiState.deadlineDetails,
         onDeadlineValueChange = viewModel::updateDeadlineDetails,
         onDatePickerClick = viewModel::clickDatePicker,
         showDatePicker = uiState.showDatePicker,
         onSave = {
             coroutineScope.launch {
-                viewModel.saveDeadline()
+                viewModel.updateDeadline()
                 navigateBack()
             }
         },
-        onCancel = {
-            navigateBack()
-        },
+        onCancel = navigateBack,
         isEntryValid = uiState.isEntryValid,
         modifier = modifier.padding(contentPadding)
     )
@@ -66,7 +64,7 @@ fun AddDeadlineScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddDeadlineBody(
+fun EditDeadlineBody(
     deadlineDetails: DeadlineDetails,
     onDeadlineValueChange: (DeadlineDetails) -> Unit,
     showDatePicker: Boolean = false,
@@ -82,7 +80,7 @@ fun AddDeadlineBody(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Dodaj Nowy Termin",
+            text = "Edytuj termin",
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
@@ -147,7 +145,7 @@ fun AddDeadlineBody(
                 onClick = onSave,
                 enabled = isEntryValid
             ) {
-                Text("Dodaj")
+                Text("Zapisz")
             }
 
             Button(onClick = onCancel) {

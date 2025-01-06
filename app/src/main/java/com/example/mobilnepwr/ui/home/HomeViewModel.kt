@@ -39,10 +39,16 @@ class HomeViewModel(
                         Locale("pl", "PL")
                     ),
                     courses = courses,
-                    isExpanded = false
+                    date = if (courses.isNotEmpty()) courses[0].date.toString() else ""
                 )
             }
-            _homeUiState.value = HomeUiState(weekDays, animOption)
+            _homeUiState.value = HomeUiState(weekDays, animOption, weekDays.map {
+                if (LocalDate.now().dayOfWeek.getDisplayName(
+                        TextStyle.FULL,
+                        Locale("pl", "PL")
+                    ) == it.name && LocalDate.now() == day.value
+                ) true else false
+            })
         }
     }
 
@@ -50,12 +56,9 @@ class HomeViewModel(
     fun onDayClick(index: Int) {
         _homeUiState.value = _homeUiState.value.copy(
             animOption = 0,
-            weekDays = _homeUiState.value.weekDays.mapIndexed { i, weekDay ->
-                if (i == index) {
-                    weekDay.copy(isExpanded = !weekDay.isExpanded)
-                } else {
-                    weekDay
-                }
+            weekDays = _homeUiState.value.weekDays,
+            isExpandedList = _homeUiState.value.isExpandedList.mapIndexed { i, isExpanded ->
+                if (i == index) !isExpanded else isExpanded
             }
         )
     }
@@ -101,14 +104,15 @@ class HomeViewModel(
 
 data class HomeUiState(
     val weekDays: List<WeekDay> = listOf(),
-    val animOption: Int = 0
+    val animOption: Int = 0,
+    val isExpandedList: List<Boolean> = listOf()
 )
 
 
 data class WeekDay(
     val name: String = "",
-    val courses: List<CourseWithDateDetails> = listOf(),
-    val isExpanded: Boolean = false
+    val date: String = "",
+    val courses: List<CourseWithDateDetails> = listOf()
 )
 
 fun CourseWithDateDetails.toDate(): Date = Date(

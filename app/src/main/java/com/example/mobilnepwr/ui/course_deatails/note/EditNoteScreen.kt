@@ -21,25 +21,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.mobilnepwr.ui.AppViewModelProvider
+import com.example.mobilnepwr.ui.AppViewModelProvider.Factory
 import com.example.mobilnepwr.ui.course_deatails.NoteDetails
 import kotlinx.coroutines.launch
 
 @Composable
-fun AddNoteScreen(
+fun EditNoteScreen(
     navigateBack: () -> Unit,
-    viewModel: AddNoteViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    contentPadding: PaddingValues = PaddingValues(0.dp),
     modifier: Modifier = Modifier,
+    viewModel: EditNoteViewModel = viewModel(factory = Factory),
+    contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.noteEditUiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
-    AddNoteBody(
+    EditNoteBody(
         noteDetails = uiState.noteDetails,
-        onNoteValueChange = viewModel::updateUiState,
+        onNoteValueChange = viewModel::updateNoteDetails,
         onSave = {
             coroutineScope.launch {
-                viewModel.saveNote()
+                viewModel.updateNote()
                 navigateBack()
             }
         },
@@ -52,7 +52,7 @@ fun AddNoteScreen(
 }
 
 @Composable
-fun AddNoteBody(
+fun EditNoteBody(
     noteDetails: NoteDetails,
     onNoteValueChange: (NoteDetails) -> Unit,
     onSave: () -> Unit = {},
@@ -99,7 +99,7 @@ fun AddNoteBody(
                 enabled = isEntryValid,
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Dodaj")
+                Text("Zapisz")
             }
 
             OutlinedButton(

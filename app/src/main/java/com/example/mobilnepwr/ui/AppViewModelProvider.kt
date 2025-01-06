@@ -8,7 +8,9 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.mobilnepwr.MobilnePWRApplication
 import com.example.mobilnepwr.ui.course_deatails.CourseDetailsViewModel
 import com.example.mobilnepwr.ui.course_deatails.deadline.AddDeadlineViewModel
+import com.example.mobilnepwr.ui.course_deatails.deadline.EditDeadlineViewModel
 import com.example.mobilnepwr.ui.course_deatails.note.AddNoteViewModel
+import com.example.mobilnepwr.ui.course_deatails.note.EditNoteViewModel
 import com.example.mobilnepwr.ui.courses.AllCoursesViewModel
 import com.example.mobilnepwr.ui.home.HomeViewModel
 import com.example.mobilnepwr.ui.import.ImportViewModel
@@ -57,6 +59,19 @@ object AppViewModelProvider {
 
         initializer {
             AddNoteViewModel(
+                this.createSavedStateHandle(),
+                mobilnePWRApplication().container.notesRepository
+            )
+        }
+        initializer {
+            EditDeadlineViewModel(
+                this.createSavedStateHandle(),
+                mobilnePWRApplication().container.deadlinesRepository
+            )
+        }
+
+        initializer {
+            EditNoteViewModel(
                 this.createSavedStateHandle(),
                 mobilnePWRApplication().container.notesRepository
             )

@@ -56,7 +56,10 @@ class CourseDetailsViewModel(
 
     fun selectTab(index: Int) {
         _courseUiState.update { currentState ->
-            currentState.copy(selectedTab = index)
+            currentState.copy(
+                prevSelectedTab = currentState.selectedTab,
+                selectedTab = index
+            )
         }
     }
 
@@ -70,6 +73,7 @@ class CourseDetailsViewModel(
 data class CourseDetailsUiState(
     val courseDetails: CourseDetails = CourseDetails(),
     val selectedTab: Int = 0,
+    val prevSelectedTab: Int = -1,
     val notesList: List<NoteDetails> = emptyList(),
     val deadlinesList: List<DeadlineDetails> = emptyList(),
     val datesList: List<DateDetails> = emptyList()
@@ -94,6 +98,7 @@ data class CourseDetails(
 )
 
 data class DeadlineDetails(
+    val deadlineId: Int = 0,
     val courseId: Int = 0,
     val title: String = "",
     val description: String = "",
@@ -122,7 +127,8 @@ fun Deadline.toDeadlineDetails(): DeadlineDetails = DeadlineDetails(
     courseId = courseId,
     title = title,
     description = description,
-    date = date
+    date = date,
+    deadlineId = deadlineId
 )
 
 fun Date.toDateDetails(): DateDetails = DateDetails(
@@ -146,6 +152,8 @@ fun DateDetails.toDate(): Date = Date(
 
 
 fun Note.toNoteDetails(): NoteDetails = NoteDetails(
+    courseId = courseId,
+    noteId = noteId,
     title = this.title,
     content = this.content,
     date = this.date

@@ -88,56 +88,47 @@ fun HomeScreen(
         Box(
             modifier = Modifier.fillMaxSize(),
         ) {
-            println(homeUiState.animOption)
-            when (homeUiState.animOption) {
-                1, 2 ->
-                    AnimatedContent(
-                        targetState = homeUiState.weekDays,
-                        content = { weekDays ->
-                            DayList(
-                                daysList = weekDays,
-                                onCourseClick = navigateToCourseDetails,
-                                onDayClick = viewModel::onDayClick,
-                                clickCheckBox = viewModel::clickCheckBox
-                            )
-                        },
-                        transitionSpec = {
-                            when (homeUiState.animOption) {
-                                1 -> {
-                                    slideInHorizontally(initialOffsetX = { it }) + fadeIn() with
-                                            slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
-                                }
-
-                                2 -> {
-                                    slideInHorizontally(initialOffsetX = { -it }) + fadeIn() with
-                                            slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
-                                }
-
-                                else -> {
-                                    fadeIn() with fadeOut()
-                                }
-                            }.using(
-                                SizeTransform(clip = false)
-                            )
-                        }, label = ""
-                    )
-
-                else ->
+            AnimatedContent(
+                targetState = homeUiState.weekDays,
+                content = { weekDays ->
                     DayList(
-                        daysList = homeUiState.weekDays,
+                        daysList = weekDays,
                         onCourseClick = navigateToCourseDetails,
                         onDayClick = viewModel::onDayClick,
-                        clickCheckBox = viewModel::clickCheckBox
+                        clickCheckBox = viewModel::clickCheckBox,
+                        isExpandedList = homeUiState.isExpandedList
                     )
-            }
+                },
+                transitionSpec = {
+                    when (homeUiState.animOption) {
+                        1 -> {
+                            slideInHorizontally(initialOffsetX = { it }) + fadeIn() with
+                                    slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+                        }
 
+                        2 -> {
+                            slideInHorizontally(initialOffsetX = { -it }) + fadeIn() with
+                                    slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
+                        }
+
+                        else -> {
+                            fadeIn() with fadeOut()
+                        }
+                    }.using(
+                        SizeTransform(clip = false)
+                    )
+                }, label = ""
+            )
         }
+
     }
+
 }
 
 @Composable
 fun DayList(
     daysList: List<WeekDay>,
+    isExpandedList: List<Boolean>,
     onCourseClick: (Int) -> Unit,
     onDayClick: (Int) -> Unit,
     clickCheckBox: (CourseWithDateDetails) -> Unit,
@@ -158,6 +149,13 @@ fun DayList(
                             style = MaterialTheme.typography.titleMedium
                         )
                     },
+                    supportingContent = {
+                        Text(
+                            text = item.date,
+                            textAlign = TextAlign.Right,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
                     modifier = modifier.then(Modifier
                         .clickable
                         { onDayClick(index) }
@@ -171,7 +169,7 @@ fun DayList(
                 CourseList(
                     onCourseClick = onCourseClick,
                     courseList = item.courses,
-                    isExpanded = item.isExpanded,
+                    isExpanded = isExpandedList.get(index),
                     clickCheckBox = clickCheckBox,
                     modifier = Modifier.fillMaxWidth()
                 )

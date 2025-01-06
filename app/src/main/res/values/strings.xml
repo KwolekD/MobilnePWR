@@ -13,9 +13,11 @@
     <string name="prev_week_desc">Poprzedni tydzień</string>
     <string name="next_week_desc">Następny tydzień</string>
     <string name="fab_import_title">Jak znaleźć link?</string>
-    <string name="fab_import_step_1">Wejdź na stronę swojego USOSa.</string>
-    <string name="fab_import_step_2">Otwórz zakładkę MÓJ USOSWEB.</string>
-    <string name="fab_import_step_3">Kliknij PLAN ZAJĘĆ.</string>
-    <string name="fab_import_step_4">Kliknij eksportuj.</string>
-    <string name="fab_import_step_5">Skopiuj link i wklej go do aplikacji.</string>
+    <string name="fab_import_step_1">1. Wejdź na stronę swojego USOSa.</string>
+    <string name="fab_import_step_2">2 .Otwórz zakładkę MÓJ USOSWEB.</string>
+    <string name="fab_import_step_3">3. Kliknij PLAN ZAJĘĆ.</string>
+    <string name="fab_import_step_4">4. Kliknij eksportuj.</string>
+    <string name="fab_import_step_5">5. Skopiuj link i wklej go do aplikacji.</string>
+    <string name="edit_deadline_title">Edit deadline</string>
+    <string name="edit_note_title">Edit note</string>
 </resources>

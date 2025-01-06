@@ -46,7 +46,9 @@ import com.example.mobilnepwr.ui.AppViewModelProvider
 import com.example.mobilnepwr.ui.components.AppBar
 import com.example.mobilnepwr.ui.course_deatails.CourseDetailsScreen
 import com.example.mobilnepwr.ui.course_deatails.deadline.AddDeadlineScreen
+import com.example.mobilnepwr.ui.course_deatails.deadline.EditDeadlineScreen
 import com.example.mobilnepwr.ui.course_deatails.note.AddNoteScreen
+import com.example.mobilnepwr.ui.course_deatails.note.EditNoteScreen
 import com.example.mobilnepwr.ui.courses.AllCoursesScreen
 import com.example.mobilnepwr.ui.home.HomeScreen
 import com.example.mobilnepwr.ui.import.ImportScreen
@@ -229,7 +231,9 @@ fun AppNavHost(
                         setFabOnClick = setFabOnClick,
                         navigateToAddDeadline = { navController.navigate("${AddDeadlineDestination.route}/${it}") },
                         navigateToAddNote = { navController.navigate("${AddNoteDestination.route}/${it}") },
-                        scaffoldViewModel = viewModel
+                        scaffoldViewModel = viewModel,
+                        navigateToEditNote = { navController.navigate("${EditNoteDestination.route}/${it}") },
+                        navigateToEditDeadline = { navController.navigate("${EditDeadlineDestination.route}/${it}") }
 
                     )
                 }
@@ -278,6 +282,53 @@ fun AppNavHost(
                         navigateBack = { navController.navigateUp() },
                         modifier = modifier,
                         contentPadding = innerPadding
+                    )
+                }
+
+                composable(
+                    route = EditDeadlineDestination.routeWithArgs,
+                    arguments = listOf(navArgument(EditDeadlineDestination.deadlineIdArg) {
+                        type = NavType.IntType
+                    })
+                ) {
+                    LaunchedEffect(Unit) {
+                        viewModel.updateState(
+                            showFab = false,
+                            onNavigationIconClick =
+                            {
+                                navController.navigateUp()
+                            },
+                            navigationIcon = Icons.Rounded.Clear
+                        )
+                    }
+
+                    EditDeadlineScreen(
+                        navigateBack = { navController.navigateUp() },
+                        contentPadding = innerPadding
+                    )
+                }
+
+                composable(
+                    route = EditNoteDestination.routeWithArgs,
+                    arguments = listOf(navArgument(EditNoteDestination.noteIdArg) {
+                        type = NavType.IntType
+                    }
+                    ))
+                {
+                    LaunchedEffect(Unit) {
+                        viewModel.updateState(
+                            showFab = false,
+                            onNavigationIconClick =
+                            {
+                                navController.navigateUp()
+                            },
+                            navigationIcon = Icons.Rounded.Clear
+                        )
+                    }
+
+                    EditNoteScreen(
+                        navigateBack = { navController.navigateUp() },
+                        contentPadding = innerPadding,
                     )
                 }
             }
@@ -335,3 +386,18 @@ object AddNoteDestination : NavigationDestination {
     val routeWithArgs = "$route/{$courseIdArg}"
 
 }
+
+object EditDeadlineDestination : NavigationDestination {
+    override val route: String = "edit_deadline"
+    override val titleRes: Int = R.string.edit_deadline_title
+    const val deadlineIdArg = "deadlineId"
+    val routeWithArgs = "$route/{$deadlineIdArg}"
+}
+
+object EditNoteDestination : NavigationDestination {
+    override val route: String = "edit_note"
+    override val titleRes: Int = R.string.edit_note_title
+    const val noteIdArg = "noteId"
+    val routeWithArgs = "$route/{$noteIdArg}"
+}
+

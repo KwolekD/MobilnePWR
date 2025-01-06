@@ -1,5 +1,12 @@
 package com.example.mobilnepwr.ui.course_deatails
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.with
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,6 +24,7 @@ import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Place
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -41,14 +49,16 @@ import com.example.mobilnepwr.ui.AppViewModelProvider
 import com.example.mobilnepwr.ui.navigation.ScaffoldViewModel
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun CourseDetailsScreen(
     modifier: Modifier = Modifier,
     viewModel: CourseDetailsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     setFabOnClick: (() -> Unit) -> Unit,
     navigateToAddDeadline: (Int) -> Unit,
+    navigateToEditDeadline: (Int) -> Unit,
     navigateToAddNote: (Int) -> Unit,
+    navigateToEditNote: (Int) -> Unit,
     contentPadding: PaddingValues,
     scaffoldViewModel: ScaffoldViewModel
 ) {
@@ -97,32 +107,77 @@ fun CourseDetailsScreen(
 
         )
 
-        when (courseUiState.selectedTab) {
-            0 -> Details(
-                courseUiState.courseDetails,
-                scaffoldViewModel
-            )
+        AnimatedContent(
+            targetState = courseUiState.selectedTab,
+            transitionSpec = {
+                if (courseUiState.prevSelectedTab < courseUiState.selectedTab) {
+                    slideInHorizontally(initialOffsetX = { it }) + fadeIn() with
+                            slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+                } else {
+                    slideInHorizontally(initialOffsetX = { -it }) + fadeIn() with
+                            slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
+                }
+            }
+        ) { targetState ->
+            when (targetState) {
+                0 -> Details(
+                    courseUiState.courseDetails,
+                    scaffoldViewModel
+                )
 
-            1 -> Notes(
-                notesList = courseUiState.notesList,
-                setFabOnClick = setFabOnClick,
-                onFabClick = { navigateToAddNote(viewModel.courseId) },
-                scaffoldViewModel = scaffoldViewModel
-            )
+                1 -> Notes(
+                    notesList = courseUiState.notesList,
+                    setFabOnClick = setFabOnClick,
+                    onFabClick = { navigateToAddNote(viewModel.courseId) },
+                    scaffoldViewModel = scaffoldViewModel,
+                    onEditClick = navigateToEditNote
+                )
 
-            2 -> Deadlines(
-                deadlinesList = courseUiState.deadlinesList,
-                setFabOnClick = setFabOnClick,
-                onFabClick = { navigateToAddDeadline(viewModel.courseId) },
-                scaffoldViewModel = scaffoldViewModel
-            )
+                2 -> Deadlines(
+                    deadlinesList = courseUiState.deadlinesList,
+                    setFabOnClick = setFabOnClick,
+                    onFabClick = { navigateToAddDeadline(viewModel.courseId) },
+                    scaffoldViewModel = scaffoldViewModel,
+                    onTrailingIconClick = navigateToEditDeadline
+                )
 
-            3 -> Dates(
-                datesList = courseUiState.datesList,
-                scaffoldViewModel = scaffoldViewModel,
-                viewModel = viewModel
-            )
+                3 -> Dates(
+                    datesList = courseUiState.datesList,
+                    scaffoldViewModel = scaffoldViewModel,
+                    viewModel = viewModel
+                )
+            }
+
         }
+//
+//        when (courseUiState.selectedTab) {
+//            0 -> Details(
+//                courseUiState.courseDetails,
+//                scaffoldViewModel
+//            )
+//
+//            1 -> Notes(
+//                notesList = courseUiState.notesList,
+//                setFabOnClick = setFabOnClick,
+//                onFabClick = { navigateToAddNote(viewModel.courseId) },
+//                scaffoldViewModel = scaffoldViewModel,
+//                onEditClick = navigateToEditNote
+//            )
+//
+//            2 -> Deadlines(
+//                deadlinesList = courseUiState.deadlinesList,
+//                setFabOnClick = setFabOnClick,
+//                onFabClick = { navigateToAddDeadline(viewModel.courseId) },
+//                scaffoldViewModel = scaffoldViewModel,
+//                onTrailingIconClick = navigateToEditDeadline
+//            )
+//
+//            3 -> Dates(
+//                datesList = courseUiState.datesList,
+//                scaffoldViewModel = scaffoldViewModel,
+//                viewModel = viewModel
+//            )
+//        }
     }
 
 }
@@ -132,6 +187,7 @@ fun Deadlines(
     deadlinesList: List<DeadlineDetails>,
     setFabOnClick: (() -> Unit) -> Unit,
     onFabClick: () -> Unit,
+    onTrailingIconClick: (Int) -> Unit,
     scaffoldViewModel: ScaffoldViewModel
 ) {
     LaunchedEffect(Unit) {
@@ -162,6 +218,9 @@ fun Deadlines(
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.align(Alignment.End)
                     )
+                    Button(
+                        onClick = { onTrailingIconClick(deadline.deadlineId) }
+                    ) { }
                 }
             }
         }
@@ -271,7 +330,8 @@ fun Notes(
     notesList: List<NoteDetails>,
     setFabOnClick: (() -> Unit) -> Unit,
     onFabClick: () -> Unit,
-    scaffoldViewModel: ScaffoldViewModel
+    scaffoldViewModel: ScaffoldViewModel,
+    onEditClick: (Int) -> Unit,
 ) {
     LaunchedEffect(Unit) {
         setFabOnClick {
@@ -341,6 +401,9 @@ fun Notes(
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.align(Alignment.End)
                     )
+                    Button(
+                        onClick = { onEditClick(note.noteId) }
+                    ) { }
                 }
             }
         }
