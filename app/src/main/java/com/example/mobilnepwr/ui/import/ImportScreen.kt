@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +38,7 @@ fun ImportScreen(
     modifier: Modifier = Modifier,
     viewModel: ImportViewModel = viewModel(factory = AppViewModelProvider.Factory),
     setFabOnClick: (() -> Unit) -> Unit,
+    navigateBack: () -> Unit,
     contentPadding: PaddingValues
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -44,7 +47,17 @@ fun ImportScreen(
         onImportLinkChange = viewModel::updateUiState,
         onImportClick = {
             coroutineScope.launch {
-                viewModel.importData()
+                if (viewModel.isDatabaseNotEmpty()) {
+                    viewModel.updateUiState(
+                        importLink = viewModel.importUiState.importLink,
+                        showConfirmationDialog = true
+                    )
+                } else {
+                    viewModel.importData()
+                    if (!viewModel.importUiState.showError)
+                        navigateBack()
+
+                }
             }
         },
         modifier = Modifier
@@ -97,6 +110,58 @@ fun ImportScreen(
                 }
             }
         }
+    }
+    if (viewModel.importUiState.showError) {
+        Snackbar(
+            modifier = Modifier.padding(16.dp),
+            content = { Text("Wystąpił błąd podczas importu. Sprawdź link i spróbuj ponownie.") },
+            action = {
+                Button(onClick = { viewModel.updateUiState(viewModel.importUiState.copy(showError = false)) }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
+    if (viewModel.importUiState.showConfirmationDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                viewModel.updateUiState(
+                    viewModel.importUiState.importLink,
+                    showConfirmationDialog = false
+                )
+            },
+            title = { Text("Potwierdź import") },
+            text = {
+                Text("W bazie istnieje już plan zajęć. Importowanie nowego planu spowoduje usunięcie poprzedniego planu oraz wszystkich powiązanych danych. Czy na pewno chcesz kontynuować?")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        coroutineScope.launch {
+                            viewModel.importData()
+                            viewModel.updateUiState(
+                                viewModel.importUiState.importLink,
+                                showConfirmationDialog = false
+                            )
+                            if (!viewModel.importUiState.showError)
+                                navigateBack()
+                        }
+                    }
+                ) {
+                    Text("Tak")
+                }
+            },
+            dismissButton = {
+                Button(onClick = {
+                    viewModel.updateUiState(
+                        viewModel.importUiState.importLink,
+                        showConfirmationDialog = false
+                    )
+                }) {
+                    Text("Nie")
+                }
+            }
+        )
     }
 
 }

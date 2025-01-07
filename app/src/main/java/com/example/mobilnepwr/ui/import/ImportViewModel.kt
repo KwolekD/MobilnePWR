@@ -22,12 +22,21 @@ class ImportViewModel(
     var importUiState by mutableStateOf(ImportUiState())
         private set
 
-    fun updateUiState(importLink: String, showInfo: Boolean = false) {
+    fun updateUiState(
+        importLink: String,
+        showInfo: Boolean = false,
+        showConfirmationDialog: Boolean = false
+    ) {
         importUiState =
             ImportUiState(
                 importLink = importLink,
-                showInfo = showInfo
+                showInfo = showInfo,
+                showConfirmationDialog = showConfirmationDialog
             )
+    }
+
+    fun updateUiState(newImportUiState: ImportUiState) {
+        importUiState = newImportUiState
     }
 
     fun clickFAB() {
@@ -37,7 +46,12 @@ class ImportViewModel(
 
     suspend fun importData() {
         val client = OkHttpClient()
-        val request = Request.Builder().url(importUiState.importLink).build()
+        val request: Request = try {
+            Request.Builder().url(importUiState.importLink).build()
+        } catch (e: IllegalArgumentException) {
+            updateUiState(importUiState.copy(showError = true))
+            return
+        }
         Log.d("import", "działa")
         try {
             val response = withContext(Dispatchers.IO) { client.newCall(request).execute() }
@@ -57,16 +71,28 @@ class ImportViewModel(
                         courseRepository.getAllItemsStream().first()
                     )
                     tempFile.delete()
+
+                } else {
+                    importUiState = importUiState.copy(showError = true)
                 }
+            } else {
+                importUiState = importUiState.copy(showError = true)
             }
             Log.d("import", response.message)
         } catch (e: Exception) {
             e.message?.let { Log.e("Import", it) }
+            importUiState = importUiState.copy(showError = true)
         }
+    }
+
+    suspend fun isDatabaseNotEmpty(): Boolean {
+        return courseRepository.getAllItemsStream().first().isNotEmpty()
     }
 }
 
 data class ImportUiState(
     val importLink: String = "",
-    val showInfo: Boolean = false
+    val showInfo: Boolean = false,
+    val showConfirmationDialog: Boolean = false,
+    var showError: Boolean = false,
 )

@@ -1,5 +1,6 @@
 package com.example.mobilnepwr.ui.course_deatails
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 import java.time.LocalDate
 
 class CourseDetailsViewModel(
@@ -78,18 +80,43 @@ class CourseDetailsViewModel(
         }
     }
 
-    fun addPhoto(uri: Uri) {
-        viewModelScope.launch {
-            val image = Image(
-                imageId = 0,
-                filePath = uri.toString(),
-                courseId = courseId
-            )
-            ImageRepository.insertItem(image)
+    fun savePhoto(context: Context, uri: Uri) {
+        val path = saveImageToAppStorage(context, uri)
+        if (path != null) {
+            viewModelScope.launch {
+                ImageRepository.insertItem(
+                    Image(
+                        courseId = courseId,
+                        filePath = path,
+                        imageId = 0
+                    )
+                )
+            }
         }
     }
 
+    fun saveImageToAppStorage(context: Context, uri: Uri): String? {
+        return try {
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val photoFile = File(context.filesDir, "photo_${System.currentTimeMillis()}.jpg")
+            inputStream?.use { input ->
+                photoFile.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+            photoFile.absolutePath // Zwrócenie ścieżki zapisanego pliku
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+
     fun deletePhoto(image: Image) {
+        val file = File(image.filePath)
+        if (file.exists()) {
+            file.delete()
+        }
         viewModelScope.launch {
             ImageRepository.deleteItem(image)
         }

@@ -51,6 +51,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.coil.compose)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.navigation.compose)
     val room_version = "2.6.1"
@@ -86,5 +87,5 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.3.1")
 
     // Coil for image loading
-    implementation("io.coil-kt:coil-compose:2.4.0")
+
 }

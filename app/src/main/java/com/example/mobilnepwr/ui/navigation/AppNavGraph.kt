@@ -186,7 +186,8 @@ fun AppNavHost(
                     }
                     ImportScreen(
                         contentPadding = innerPadding,
-                        setFabOnClick = setFabOnClick
+                        setFabOnClick = setFabOnClick,
+                        navigateBack = navController::navigateUp
                     )
                 }
 
