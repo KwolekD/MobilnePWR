@@ -2,6 +2,8 @@ package com.example.mobilnepwr.ui.home
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.expandVertically
@@ -24,14 +26,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
@@ -40,6 +45,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -96,7 +102,8 @@ fun HomeScreen(
                         onCourseClick = navigateToCourseDetails,
                         onDayClick = viewModel::onDayClick,
                         clickCheckBox = viewModel::clickCheckBox,
-                        isExpandedList = homeUiState.isExpandedList
+                        isExpandedList = homeUiState.isExpandedList,
+                        listState = viewModel.lazyListState
                     )
                 },
                 transitionSpec = {
@@ -112,7 +119,7 @@ fun HomeScreen(
                         }
 
                         else -> {
-                            fadeIn() with fadeOut()
+                            EnterTransition.None with ExitTransition.None
                         }
                     }.using(
                         SizeTransform(clip = false)
@@ -133,20 +140,22 @@ fun DayList(
     onDayClick: (Int) -> Unit,
     clickCheckBox: (CourseWithDateDetails) -> Unit,
     modifier: Modifier = Modifier,
+    listState: LazyListState
 ) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        state = listState,
     ) {
         itemsIndexed(daysList) { index, item ->
             if (item.courses.isNotEmpty()) {
                 ListItem(
                     headlineContent = {
                         Text(
-                            text = item.name,
+                            text = item.name.replaceFirstChar { it.uppercase() },
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.titleMedium
+                            style = MaterialTheme.typography.headlineSmall,
                         )
                     },
                     supportingContent = {
@@ -156,13 +165,17 @@ fun DayList(
                             style = MaterialTheme.typography.bodyMedium
                         )
                     },
+                    colors = ListItemDefaults.colors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    ),
                     modifier = modifier.then(Modifier
                         .clickable
                         { onDayClick(index) }
+                        .clip(ShapeDefaults.Medium)
                         .border(
-                            width = 1.dp,
+                            width = 2.dp,
                             color = MaterialTheme.colorScheme.primary,
-                            shape = ShapeDefaults.Small
+                            shape = ShapeDefaults.Medium
                         ))
                 )
 
@@ -205,28 +218,41 @@ fun CourseList(
 
                 ListItem(
                     headlineContent = {
-                        Text(text = course.name)
+                        Text(
+                            text = course.name,
+                            style = MaterialTheme.typography.titleMedium
+                        )
                     },
                     leadingContent = {
                         Text(
-                            text = "${course.type}."
+                            text = course.type,
+                            style = MaterialTheme.typography.titleMedium
                         )
                     },
                     supportingContent = {
                         Text(
                             text = "${course.startTime} - ${course.endTime}",
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     },
                     trailingContent = {
                         Checkbox(
                             checked = course.attendance,
-                            onCheckedChange = { clickCheckBox(course) }
+                            onCheckedChange = { clickCheckBox(course) },
+                            colors = CheckboxDefaults.colors()
+                                .copy(checkedBoxColor = MaterialTheme.colorScheme.primary)
                         )
                     },
+                    colors = ListItemDefaults.colors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        headlineColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        leadingIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        trailingIconColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    ),
                     modifier = Modifier
                         .clickable { onCourseClick(course.courseId) }
                         .padding(vertical = 4.dp)
+                        .clip(ShapeDefaults.Medium)
                 )
 
             }

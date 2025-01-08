@@ -1,10 +1,15 @@
 package com.example.mobilnepwr.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -31,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -82,22 +88,45 @@ fun AppNavHost(
                         HorizontalDivider()
                         NavigationDrawerItem(
                             label = {
-                                Text(text = stringResource(item.titleRes))
+                                Text(
+                                    text = stringResource(item.titleRes),
+                                    modifier = Modifier.padding(horizontal = 8.dp),
+                                    style = MaterialTheme.typography.titleMedium
+                                )
                             },
                             icon = {
                                 Icon(
                                     imageVector = item.icon,
-                                    contentDescription = stringResource(item.contentDescriptionRes)
+                                    contentDescription = stringResource(item.contentDescriptionRes),
+                                    modifier = Modifier.size(34.dp),
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             },
                             onClick = {
                                 scope.launch {
                                     drawerState.close()
                                 }
-                                navController.navigate(item.route)
-                            },
+                                if (currentRoute != item.route) {
+                                    navController.navigate(item.route) {
+                                        launchSingleTop = true
+                                        if (item.route == HomeDestination.route) {
+                                            popUpTo(navController.graph.startDestinationId) {
+                                                inclusive = true
+                                            }
+                                        }
 
-                            selected = currentRoute == item.route
+                                    }
+
+                                }
+                            },
+                            shape = RectangleShape,
+                            selected = currentRoute == item.route,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = 4.dp,
+                                    vertical = 2.dp
+                                )
                         )
 
                     }
@@ -107,7 +136,7 @@ fun AppNavHost(
         },
         drawerState = drawerState,
         scrimColor = Color.Transparent,
-        gesturesEnabled = true
+        gesturesEnabled = uiState.enableGestures
     )
     {
         Scaffold(
@@ -122,12 +151,12 @@ fun AppNavHost(
                 if (uiState.showFab) {
                     FloatingActionButton(
                         onClick = { onFabClick?.invoke() },
-                        containerColor = Color.Cyan
+                        containerColor = MaterialTheme.colorScheme.primary
                     ) {
                         Icon(
                             imageVector = uiState.iconFab,
                             contentDescription = stringResource(R.string.fab_desc),
-                            tint = Color.White
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 }
@@ -147,7 +176,31 @@ fun AppNavHost(
             NavHost(
                 navController = navController,
                 startDestination = HomeDestination.route,
-                modifier = modifier
+                exitTransition = {
+                    slideOutVertically(
+                        animationSpec = tween(900),
+                        targetOffsetY = { it }
+                    )
+                },
+                enterTransition = {
+                    slideInVertically(
+                        animationSpec = tween(900),
+                        initialOffsetY = { -it }
+                    )
+                },
+                popEnterTransition = {
+                    slideInVertically(
+                        animationSpec = tween(600),
+                        initialOffsetY = { -it }
+                    )
+                },
+                popExitTransition = {
+                    slideOutVertically(
+                        animationSpec = tween(600),
+                        targetOffsetY = { it }
+                    )
+                },
+                modifier = modifier,
             ) {
                 composable(
                     route = HomeDestination.route

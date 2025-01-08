@@ -18,7 +18,8 @@ class ScaffoldViewModel : ViewModel() {
         iconFab: ImageVector = _uiState.value.iconFab,
         title: String = "",
         onNavigationIconClick: () -> Unit = _uiState.value.onNavigationIconClick,
-        navigationIcon: ImageVector = Icons.Default.Menu
+        navigationIcon: ImageVector = Icons.Default.Menu,
+        enableGestures: Boolean = true
     ) {
         _uiState.update {
             it.copy(
@@ -26,7 +27,8 @@ class ScaffoldViewModel : ViewModel() {
                 iconFab = iconFab,
                 title = title,
                 onNavigationIconClick = onNavigationIconClick,
-                navigationIcon = navigationIcon
+                navigationIcon = navigationIcon,
+                enableGestures = enableGestures
             )
         }
     }
@@ -37,5 +39,6 @@ data class ScaffoldState(
     val iconFab: ImageVector = Icons.Default.Add,
     val title: String = "",
     val onNavigationIconClick: () -> Unit = {},
-    val navigationIcon: ImageVector = Icons.Default.Menu
+    val navigationIcon: ImageVector = Icons.Default.Menu,
+    val enableGestures: Boolean = false
 )

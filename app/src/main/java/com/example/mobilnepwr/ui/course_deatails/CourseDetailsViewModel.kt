@@ -15,6 +15,8 @@ import com.example.mobilnepwr.data.images.Image
 import com.example.mobilnepwr.data.images.ImageRepository
 import com.example.mobilnepwr.data.notes.Note
 import com.example.mobilnepwr.data.notes.NoteRepository
+import com.example.mobilnepwr.ui.course_deatails.deadline.toDeadline
+import com.example.mobilnepwr.ui.course_deatails.note.toNote
 import com.example.mobilnepwr.ui.navigation.CourseDetailsDestination
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,6 +76,18 @@ class CourseDetailsViewModel(
         }
     }
 
+    fun deleteNote(noteDetails: NoteDetails) {
+        viewModelScope.launch {
+            notesRepository.deleteNote(noteDetails.toNote())
+        }
+    }
+
+    fun deleteDeadline(deadlineDetails: DeadlineDetails) {
+        viewModelScope.launch {
+            deadlineRepository.deleteDeadline(deadlineDetails.toDeadline())
+        }
+    }
+
     fun updateCheckBox(date: DateDetails) {
         viewModelScope.launch {
             dateRepository.updateDate(date.copy(attendance = !date.attendance).toDate())
@@ -111,6 +125,18 @@ class CourseDetailsViewModel(
         }
     }
 
+    fun clickNote(index: Int) {
+        _courseUiState.update {
+            it.copy(notesList = it.notesList.mapIndexed { i, noteDetails ->
+                if (i == index) {
+                    noteDetails.copy(isExpanded = !noteDetails.isExpanded)
+                } else {
+                    noteDetails.copy(isExpanded = false)
+                }
+            })
+        }
+    }
+
 
     fun deletePhoto(image: Image) {
         val file = File(image.filePath)
@@ -131,7 +157,7 @@ data class CourseDetailsUiState(
     val notesList: List<NoteDetails> = emptyList(),
     val deadlinesList: List<DeadlineDetails> = emptyList(),
     val datesList: List<DateDetails> = emptyList(),
-    val imageList: List<Image> = emptyList()
+    val imageList: List<Image> = emptyList(),
 )
 
 data class NoteDetails(
@@ -139,7 +165,9 @@ data class NoteDetails(
     val courseId: Int = 0,
     val title: String = "",
     val content: String = "",
-    val date: LocalDate = LocalDate.now()
+    val date: LocalDate = LocalDate.now(),
+    val contentShort: String = content.take(90) + "...",
+    val isExpanded: Boolean = false
 )
 
 

@@ -9,6 +9,7 @@ import com.example.mobilnepwr.ui.navigation.AddNoteDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class AddNoteViewModel(
     savedStateHandle: SavedStateHandle,
@@ -24,6 +25,7 @@ class AddNoteViewModel(
         _uiState.value =
             AddNoteUiState(noteDetails = noteDetails, isEntryValid = validateInput())
     }
+    
 
     suspend fun saveNote() {
         if (_uiState.value.isEntryValid) {
@@ -42,7 +44,6 @@ class AddNoteViewModel(
 
 data class AddNoteUiState(
     val noteDetails: NoteDetails = NoteDetails(),
-    val showDatePicker: Boolean = false,
     val isEntryValid: Boolean = false
 )
 

@@ -1,5 +1,6 @@
 package com.example.mobilnepwr.ui.home
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobilnepwr.data.courses.CourseRepository
@@ -21,6 +22,7 @@ class HomeViewModel(
 ) : ViewModel() {
     private val day = MutableStateFlow(LocalDate.now())
     private val _homeUiState = MutableStateFlow(HomeUiState())
+    val lazyListState = LazyListState()
     val homeUiState: StateFlow<HomeUiState> = _homeUiState
 
     init {
@@ -30,7 +32,7 @@ class HomeViewModel(
     private fun initializeHomeUiState(startDate: LocalDate = LocalDate.now(), animOption: Int = 0) {
         viewModelScope.launch {
             val firstDayOfWeek = getFirstDayOfWeek(startDate)
-            val weekDays = (1 until 6).map { offset ->
+            val weekDays = (0 until 6).map { offset ->
                 val currentDay = firstDayOfWeek.plusDays(offset.toLong())
                 val courses = courseRepository.getCoursesWithDateDetails(currentDay).first()
                 WeekDay(

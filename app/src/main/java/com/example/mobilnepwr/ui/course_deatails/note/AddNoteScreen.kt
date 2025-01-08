@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -19,8 +20,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mobilnepwr.R
 import com.example.mobilnepwr.ui.AppViewModelProvider
 import com.example.mobilnepwr.ui.course_deatails.NoteDetails
 import kotlinx.coroutines.launch
@@ -45,7 +49,7 @@ fun AddNoteScreen(
         },
         onCancel = navigateBack,
         isEntryValid = uiState.isEntryValid,
-        modifier = modifier.padding(contentPadding)
+        contentPadding = contentPadding
     )
 
 
@@ -58,41 +62,43 @@ fun AddNoteBody(
     onSave: () -> Unit = {},
     onCancel: () -> Unit = {},
     isEntryValid: Boolean = false,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
+        .padding(10.dp)
+        .fillMaxWidth()
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+            .padding(contentPadding),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            text = stringResource(R.string.add_note_title),
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = modifier,
+            textAlign = TextAlign.Center
+        )
         TextField(
             value = noteDetails.title,
             onValueChange = { onNoteValueChange(noteDetails.copy(title = it)) },
             label = { Text("Tytuł") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = modifier
         )
 
-        OutlinedButton(
-            onClick = {},
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(noteDetails.date.toString())
-        }
 
         TextField(
             value = noteDetails.content,
             onValueChange = { onNoteValueChange(noteDetails.copy(content = it)) },
             label = { Text("Opis") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = modifier
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = modifier
         ) {
             Button(
                 onClick = onSave,

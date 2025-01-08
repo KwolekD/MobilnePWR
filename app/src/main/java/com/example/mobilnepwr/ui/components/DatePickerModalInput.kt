@@ -1,6 +1,7 @@
 package com.example.mobilnepwr.ui.components
 
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,16 +14,20 @@ import androidx.compose.runtime.Composable
 @Composable
 fun DatePickerModalInput(
     onDateSelected: (Long?) -> Unit,
+    selectedDate: Long,
     onDismiss: () -> Unit
 ) {
-    val datePickerState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
+    val datePickerState = rememberDatePickerState(
+        initialDisplayMode = DisplayMode.Input,
+        initialSelectedDateMillis = selectedDate
+    )
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
                 onDismiss()
+                onDateSelected(datePickerState.selectedDateMillis)
             }) {
                 Text("Zapisz")
             }
@@ -33,6 +38,9 @@ fun DatePickerModalInput(
             }
         }
     ) {
-        DatePicker(state = datePickerState)
+        DatePicker(
+            state = datePickerState,
+            dateFormatter = DatePickerDefaults.dateFormatter()
+        )
     }
 }

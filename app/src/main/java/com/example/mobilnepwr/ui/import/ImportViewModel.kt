@@ -27,12 +27,11 @@ class ImportViewModel(
         showInfo: Boolean = false,
         showConfirmationDialog: Boolean = false
     ) {
-        importUiState =
-            ImportUiState(
-                importLink = importLink,
-                showInfo = showInfo,
-                showConfirmationDialog = showConfirmationDialog
-            )
+        importUiState = importUiState.copy(
+            importLink = importLink,
+            showInfo = showInfo,
+            showConfirmationDialog = showConfirmationDialog
+        )
     }
 
     fun updateUiState(newImportUiState: ImportUiState) {
@@ -49,7 +48,8 @@ class ImportViewModel(
         val request: Request = try {
             Request.Builder().url(importUiState.importLink).build()
         } catch (e: IllegalArgumentException) {
-            updateUiState(importUiState.copy(showError = true))
+            importUiState = importUiState.copy(showError = true)
+            Log.d("ImportViewModel", "Stan showError: ${importUiState.showError}")
             return
         }
         Log.d("import", "działa")
@@ -74,14 +74,19 @@ class ImportViewModel(
 
                 } else {
                     importUiState = importUiState.copy(showError = true)
+                    Log.d("ImportViewModel", "Stan showError: ${importUiState.showError}")
+                    return
                 }
             } else {
                 importUiState = importUiState.copy(showError = true)
+                Log.d("ImportViewModel", "Stan showError: ${importUiState.showError}")
+                return
             }
             Log.d("import", response.message)
         } catch (e: Exception) {
             e.message?.let { Log.e("Import", it) }
             importUiState = importUiState.copy(showError = true)
+            Log.d("ImportViewModel", "Stan showError: ${importUiState.showError}")
         }
     }
 
@@ -94,5 +99,5 @@ data class ImportUiState(
     val importLink: String = "",
     val showInfo: Boolean = false,
     val showConfirmationDialog: Boolean = false,
-    var showError: Boolean = false,
+    val showError: Boolean = false,
 )

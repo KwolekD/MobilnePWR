@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 
@@ -33,7 +32,6 @@ class EditNoteViewModel(
                     .filterNotNull()
                     .first()
                     .toNoteDetails(),
-                showDatePicker = false,
                 isEntryValid = true
             )
 
@@ -47,13 +45,6 @@ class EditNoteViewModel(
         )
     }
 
-    fun clickDatePicker() {
-        _noteEditUiState.update {
-            it.copy(
-                showDatePicker = !it.showDatePicker
-            )
-        }
-    }
 
     suspend fun updateNote() {
         viewModelScope.launch {
@@ -65,7 +56,7 @@ class EditNoteViewModel(
 
     fun validateInput(): Boolean {
         return with(_noteEditUiState.value.noteDetails) {
-            title.isNotBlank() && date != null && content.isNotBlank()
+            title.isNotBlank() && content.isNotBlank()
         }
     }
 }
