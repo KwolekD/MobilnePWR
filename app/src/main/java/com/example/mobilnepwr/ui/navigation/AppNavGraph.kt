@@ -176,36 +176,36 @@ fun AppNavHost(
             NavHost(
                 navController = navController,
                 startDestination = HomeDestination.route,
-                exitTransition = {
-                    slideOutVertically(
-                        animationSpec = tween(900),
-                        targetOffsetY = { it }
-                    )
-                },
-                enterTransition = {
-                    slideInVertically(
-                        animationSpec = tween(900),
-                        initialOffsetY = { -it }
-                    )
-                },
-                popEnterTransition = {
-                    slideInVertically(
-                        animationSpec = tween(600),
-                        initialOffsetY = { -it }
-                    )
-                },
-                popExitTransition = {
-                    slideOutVertically(
-                        animationSpec = tween(600),
-                        targetOffsetY = { it }
-                    )
-                },
+//                exitTransition = {
+//                    slideOutVertically(
+//                        animationSpec = tween(900),
+//                        targetOffsetY = { it }
+//                    )
+//                },
+//                enterTransition = {
+//                    slideInVertically(
+//                        animationSpec = tween(900),
+//                        initialOffsetY = { -it }
+//                    )
+//                },
+//                popEnterTransition = {
+//                    slideInVertically(
+//                        animationSpec = tween(600),
+//                        initialOffsetY = { -it }
+//                    )
+//                },
+//                popExitTransition = {
+//                    slideOutVertically(
+//                        animationSpec = tween(600),
+//                        targetOffsetY = { it }
+//                    )
+//                },
                 modifier = modifier,
             ) {
                 composable(
                     route = HomeDestination.route
                 ) {
-                    LaunchedEffect(Unit) {
+                    LaunchedEffect(currentRoute) {
                         viewModel.updateState(
                             showFab = false,
                             onNavigationIconClick = {
@@ -225,7 +225,7 @@ fun AppNavHost(
                 composable(
                     route = ImportDestination.route
                 ) {
-                    LaunchedEffect(Unit) {
+                    LaunchedEffect(currentRoute) {
                         viewModel.updateState(
                             showFab = true,
                             onNavigationIconClick = {
@@ -247,7 +247,7 @@ fun AppNavHost(
                 composable(
                     route = AllCoursesDestination.route
                 ) {
-                    LaunchedEffect(Unit) {
+                    LaunchedEffect(currentRoute) {
                         viewModel.updateState(
                             showFab = false,
                             onNavigationIconClick = {
@@ -269,13 +269,15 @@ fun AppNavHost(
                         type = NavType.IntType
                     })
                 ) {
-                    LaunchedEffect(Unit) {
+                    LaunchedEffect(currentRoute) {
                         viewModel.updateState(
                             showFab = false,
                             onNavigationIconClick = {
                                 navController.navigateUp()
                             },
                             navigationIcon = Icons.Rounded.Clear,
+                            enableGestures = false
+
                         )
                     }
 
@@ -299,13 +301,14 @@ fun AppNavHost(
                     })
                 )
                 {
-                    LaunchedEffect(Unit) {
+                    LaunchedEffect(currentRoute) {
                         viewModel.updateState(
                             showFab = false,
                             onNavigationIconClick = {
                                 navController.navigateUp()
                             },
                             navigationIcon = Icons.Rounded.Clear,
+                            enableGestures = false
                         )
                     }
                     AddDeadlineScreen(
@@ -322,13 +325,14 @@ fun AppNavHost(
                     })
                 )
                 {
-                    LaunchedEffect(Unit) {
+                    LaunchedEffect(currentRoute) {
                         viewModel.updateState(
                             showFab = false,
                             onNavigationIconClick = {
                                 navController.navigateUp()
                             },
                             navigationIcon = Icons.Rounded.Clear,
+                            enableGestures = false
                         )
                     }
 
@@ -345,14 +349,15 @@ fun AppNavHost(
                         type = NavType.IntType
                     })
                 ) {
-                    LaunchedEffect(Unit) {
+                    LaunchedEffect(currentRoute) {
                         viewModel.updateState(
                             showFab = false,
                             onNavigationIconClick =
                             {
                                 navController.navigateUp()
                             },
-                            navigationIcon = Icons.Rounded.Clear
+                            navigationIcon = Icons.Rounded.Clear,
+                            enableGestures = false
                         )
                     }
 
@@ -369,14 +374,15 @@ fun AppNavHost(
                     }
                     ))
                 {
-                    LaunchedEffect(Unit) {
+                    LaunchedEffect(currentRoute) {
                         viewModel.updateState(
                             showFab = false,
                             onNavigationIconClick =
                             {
                                 navController.navigateUp()
                             },
-                            navigationIcon = Icons.Rounded.Clear
+                            navigationIcon = Icons.Rounded.Clear,
+                            enableGestures = false
                         )
                     }
 

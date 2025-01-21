@@ -22,7 +22,7 @@ class AddDeadlineViewModel(
 
     fun updateDeadlineDetails(deadlineDetails: DeadlineDetails) {
         _uiState.value =
-            AddDeadlineUiState(deadlineDetails = deadlineDetails, isEntryValid = validateInput())
+            AddDeadlineUiState(deadlineDetails = deadlineDetails, isEntryValid = validateInput(deadlineDetails))
     }
 
     fun clickDatePicker() {
@@ -33,14 +33,14 @@ class AddDeadlineViewModel(
         }
     }
 
-    fun validateInput(): Boolean {
-        return with(_uiState.value.deadlineDetails) {
+    fun validateInput(deadlineDetails: DeadlineDetails): Boolean {
+        return with(deadlineDetails) {
             title.isNotBlank() && date != null && description.isNotBlank()
         }
     }
 
     suspend fun saveDeadline() {
-        if (validateInput()) {
+        if (validateInput(_uiState.value.deadlineDetails)) {
             deadlineRepository.insertDeadline(_uiState.value.deadlineDetails.toDeadline(courseId))
         }
     }

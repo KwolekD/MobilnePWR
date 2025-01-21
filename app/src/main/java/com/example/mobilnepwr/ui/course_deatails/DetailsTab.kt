@@ -28,11 +28,12 @@ fun Details(
 
     courseDetails: CourseDetails,
     scaffoldViewModel: ScaffoldViewModel,
+    selectedTab: Int,
     itemModifier: Modifier = Modifier
         .fillMaxWidth()
         .padding(10.dp)
 ) {
-    LaunchedEffect(Unit) {
+    LaunchedEffect(selectedTab) {
         scaffoldViewModel.updateState(
             showFab = false,
             navigationIcon = Icons.Default.Clear,

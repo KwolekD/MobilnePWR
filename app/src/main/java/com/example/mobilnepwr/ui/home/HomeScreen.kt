@@ -14,6 +14,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.animation.with
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -109,17 +110,17 @@ fun HomeScreen(
                 transitionSpec = {
                     when (homeUiState.animOption) {
                         1 -> {
-                            slideInHorizontally(initialOffsetX = { it }) + fadeIn() with
+                            slideInHorizontally(initialOffsetX = { it }) + fadeIn() togetherWith
                                     slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
                         }
 
                         2 -> {
-                            slideInHorizontally(initialOffsetX = { -it }) + fadeIn() with
+                            slideInHorizontally(initialOffsetX = { -it }) + fadeIn() togetherWith
                                     slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
                         }
 
                         else -> {
-                            EnterTransition.None with ExitTransition.None
+                            EnterTransition.None togetherWith  ExitTransition.None
                         }
                     }.using(
                         SizeTransform(clip = false)

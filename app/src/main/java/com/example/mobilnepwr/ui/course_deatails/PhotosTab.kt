@@ -30,9 +30,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import coil3.compose.rememberAsyncImagePainter
+import com.example.mobilnepwr.R
 import com.example.mobilnepwr.data.images.Image
 import com.example.mobilnepwr.ui.navigation.ScaffoldViewModel
 
@@ -44,9 +46,10 @@ fun Photos(
     onFabClick: () -> Unit,
     scaffoldViewModel: ScaffoldViewModel,
     onDeletePhoto: (Image) -> Unit,
+    selectedTab: Int
 ) {
     var selectedImage by remember { mutableStateOf<Image?>(null) }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(selectedTab) {
         setFabOnClick {
             onFabClick()
         }
@@ -59,12 +62,12 @@ fun Photos(
     }
 
 
-    LazyColumn(modifier = Modifier.padding(30.dp)) {
+    LazyColumn(modifier = Modifier.padding(10.dp)
+        .fillMaxSize()) {
         item {
             Text(
-                text = "Twoje zdjęcia:",
+                text = stringResource(R.string.photos_tab_title),
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(4.dp)
             )
         }
         items(photosList) { image ->

@@ -90,7 +90,7 @@ fun EditNoteBody(
         TextField(
             value = noteDetails.content,
             onValueChange = { onNoteValueChange(noteDetails.copy(content = it)) },
-            label = { Text("Opis") },
+            label = { Text(stringResource(R.string.description_label)) },
             modifier = modifier
         )
 
@@ -105,14 +105,14 @@ fun EditNoteBody(
                 enabled = isEntryValid,
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Dodaj")
+                Text(stringResource(R.string.save_button_label))
             }
 
             OutlinedButton(
                 onClick = onCancel,
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Anuluj")
+                Text(stringResource(R.string.cancel_button_label))
             }
         }
 

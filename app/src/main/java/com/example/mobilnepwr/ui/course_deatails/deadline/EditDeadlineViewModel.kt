@@ -45,7 +45,7 @@ class EditDeadlineViewModel(
     fun updateDeadlineDetails(deadlineDetails: DeadlineDetails) {
         _editDeadlineUiState.value = _editDeadlineUiState.value.copy(
             deadlineDetails = deadlineDetails,
-            isEntryValid = validateInput()
+            isEntryValid = validateInput(deadlineDetails)
         )
     }
 
@@ -65,8 +65,8 @@ class EditDeadlineViewModel(
         }
     }
 
-    fun validateInput(): Boolean {
-        return with(_editDeadlineUiState.value.deadlineDetails) {
+    fun validateInput(deadlineDetails: DeadlineDetails): Boolean {
+        return with(deadlineDetails) {
             title.isNotBlank() && date != null && description.isNotBlank()
         }
     }

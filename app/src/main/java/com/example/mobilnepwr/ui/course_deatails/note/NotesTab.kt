@@ -27,7 +27,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.mobilnepwr.R
 import com.example.mobilnepwr.ui.course_deatails.NoteDetails
 import com.example.mobilnepwr.ui.navigation.ScaffoldViewModel
 
@@ -41,8 +43,9 @@ fun Notes(
     onEditClick: (Int) -> Unit,
     onDeleteClick: (NoteDetails) -> Unit,
     clickNote: (Int) -> Unit,
+    selectedTab: Int
 ) {
-    LaunchedEffect(Unit) {
+    LaunchedEffect(selectedTab) {
         setFabOnClick {
             onFabClick()
         }
@@ -61,7 +64,7 @@ fun Notes(
     ) {
         item {
             Text(
-                text = "Twoje notatki:",
+                text = stringResource(R.string.notes_tab_title),
                 style = MaterialTheme.typography.titleLarge,
             )
         }

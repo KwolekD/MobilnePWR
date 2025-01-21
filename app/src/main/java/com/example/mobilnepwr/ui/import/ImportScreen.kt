@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -61,11 +62,7 @@ fun ImportScreen(
             }
         },
         modifier = Modifier
-            .padding(
-                start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
-                top = contentPadding.calculateTopPadding(),
-                end = contentPadding.calculateEndPadding(LocalLayoutDirection.current),
-            )
+            .padding(contentPadding)
             .fillMaxWidth()
     )
 
@@ -216,6 +213,7 @@ fun ImportBody(
                 label = { Text(stringResource(R.string.link_label)) },
                 maxLines = 1
             )
+            Spacer(modifier = Modifier.padding(vertical = 10.dp))
             Button(
                 onClick = { onImportClick() },
                 enabled = importUiState.importLink.isNotEmpty(),

@@ -57,11 +57,11 @@ fun AllCoursesBody(
                     .padding(10.dp)
                     .fillMaxWidth()
                     .clickable { onCourseClick(item.courseId) }
-                    .clip(MaterialTheme.shapes.medium)
+                    .clip(MaterialTheme.shapes.small)
                     .border(
                         width = 1.dp,
                         color = MaterialTheme.colorScheme.primary,
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.small
                     )
 
             )

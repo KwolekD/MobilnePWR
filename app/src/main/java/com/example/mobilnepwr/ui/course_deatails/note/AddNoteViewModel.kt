@@ -23,7 +23,7 @@ class AddNoteViewModel(
 
     fun updateUiState(noteDetails: NoteDetails) {
         _uiState.value =
-            AddNoteUiState(noteDetails = noteDetails, isEntryValid = validateInput())
+            AddNoteUiState(noteDetails = noteDetails, isEntryValid = validateInput(noteDetails))
     }
     
 
@@ -34,8 +34,8 @@ class AddNoteViewModel(
 
     }
 
-    fun validateInput(): Boolean {
-        return with(_uiState.value.noteDetails) {
+    fun validateInput(noteDetails: NoteDetails): Boolean {
+        return with(noteDetails) {
             title.isNotBlank() && content.isNotBlank()
         }
     }

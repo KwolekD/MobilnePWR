@@ -36,4 +36,8 @@
     <string name="no_button_title">Nie</string>
     <string name="link_label">Link</string>
     <string name="import_button_title">Importuj</string>
+    <string name="photos_tab_title">Twoje zdjęcia:</string>
+    <string name="dates_tab_title">Twoje obecności:</string>
+    <string name="notes_tab_title">Twoje notatki:</string>
+    <string name="deadlines_tab_title">Twoje terminy:</string>
 </resources>

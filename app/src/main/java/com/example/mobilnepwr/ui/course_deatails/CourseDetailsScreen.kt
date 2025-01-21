@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.animation.with
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
@@ -25,6 +28,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -116,10 +120,10 @@ fun CourseDetailsScreen(
             targetState = courseUiState.selectedTab,
             transitionSpec = {
                 if (courseUiState.prevSelectedTab < courseUiState.selectedTab) {
-                    slideInHorizontally(initialOffsetX = { it }) + fadeIn() with
+                    slideInHorizontally(initialOffsetX = { it }) + fadeIn() togetherWith
                             slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
                 } else {
-                    slideInHorizontally(initialOffsetX = { -it }) + fadeIn() with
+                    slideInHorizontally(initialOffsetX = { -it }) + fadeIn() togetherWith
                             slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
                 }
             }
@@ -127,9 +131,10 @@ fun CourseDetailsScreen(
 
             when (targetState) {
                 0 -> Details(
-                    courseUiState.courseDetails,
-                    scaffoldViewModel
-                )
+                        courseUiState.courseDetails,
+                        scaffoldViewModel,
+                        targetState,
+                    )
 
                 1 -> Notes(
                     notesList = courseUiState.notesList,
@@ -139,6 +144,7 @@ fun CourseDetailsScreen(
                     onEditClick = navigateToEditNote,
                     onDeleteClick = viewModel::deleteNote,
                     clickNote = viewModel::clickNote,
+                    selectedTab = targetState
                 )
 
                 2 -> Deadlines(
@@ -147,13 +153,15 @@ fun CourseDetailsScreen(
                     onFabClick = { navigateToAddDeadline(viewModel.courseId) },
                     scaffoldViewModel = scaffoldViewModel,
                     onEditClick = navigateToEditDeadline,
-                    onDeleteClick = viewModel::deleteDeadline
+                    onDeleteClick = viewModel::deleteDeadline,
+                    selectedTab = targetState
                 )
 
                 3 -> Dates(
                     datesList = courseUiState.datesList,
                     scaffoldViewModel = scaffoldViewModel,
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    selectedTab = targetState
                 )
 
                 4 -> Photos(
@@ -161,7 +169,8 @@ fun CourseDetailsScreen(
                     setFabOnClick = setFabOnClick,
                     onFabClick = { launcher.launch("image/*") },
                     scaffoldViewModel = scaffoldViewModel,
-                    onDeletePhoto = viewModel::deletePhoto
+                    onDeletePhoto = viewModel::deletePhoto,
+                    selectedTab = targetState
                 )
             }
         }

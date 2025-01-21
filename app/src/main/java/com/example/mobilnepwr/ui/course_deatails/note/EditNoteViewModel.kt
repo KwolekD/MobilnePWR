@@ -41,7 +41,7 @@ class EditNoteViewModel(
     fun updateNoteDetails(noteDetails: NoteDetails) {
         _noteEditUiState.value = _noteEditUiState.value.copy(
             noteDetails = noteDetails,
-            isEntryValid = validateInput()
+            isEntryValid = validateInput(noteDetails)
         )
     }
 
@@ -54,8 +54,8 @@ class EditNoteViewModel(
         }
     }
 
-    fun validateInput(): Boolean {
-        return with(_noteEditUiState.value.noteDetails) {
+    fun validateInput(noteDetails: NoteDetails): Boolean {
+        return with(noteDetails) {
             title.isNotBlank() && content.isNotBlank()
         }
     }

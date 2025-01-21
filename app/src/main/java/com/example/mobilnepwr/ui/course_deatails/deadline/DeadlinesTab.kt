@@ -24,7 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.mobilnepwr.R
 import com.example.mobilnepwr.ui.course_deatails.DeadlineDetails
 import com.example.mobilnepwr.ui.navigation.ScaffoldViewModel
 import java.time.format.DateTimeFormatter
@@ -36,9 +38,10 @@ fun Deadlines(
     onFabClick: () -> Unit,
     onEditClick: (Int) -> Unit,
     onDeleteClick: (DeadlineDetails) -> Unit,
+    selectedTab: Int,
     scaffoldViewModel: ScaffoldViewModel
 ) {
-    LaunchedEffect(Unit) {
+    LaunchedEffect(selectedTab) {
         setFabOnClick {
             onFabClick()
         }
@@ -55,7 +58,7 @@ fun Deadlines(
             .fillMaxSize()
     ) {
         item {
-            Text(text = "Twoje terminy:", style = MaterialTheme.typography.titleLarge)
+            Text(text = stringResource(R.string.deadlines_tab_title), style = MaterialTheme.typography.titleLarge)
 //            if (deadlinesList.isEmpty()) {
 //                Text(
 //                    text = "Dodaj terminy",

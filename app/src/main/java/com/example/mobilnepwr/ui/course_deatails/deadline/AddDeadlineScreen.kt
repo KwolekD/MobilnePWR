@@ -99,14 +99,14 @@ fun AddDeadlineBody(
             value = deadlineDetails.title,
             singleLine = true,
             onValueChange = { onDeadlineValueChange(deadlineDetails.copy(title = it)) },
-            label = { Text("Tytuł") },
+            label = { Text(stringResource(R.string.title_label)) },
             modifier = modifier
         )
 
         OutlinedTextField(
             value = deadlineDetails.date.format(DateTimeFormatter.ofPattern("DD-MM-yyyy")),
             onValueChange = { },
-            label = { Text("Data") },
+            label = { Text(stringResource(R.string.date_label)) },
             placeholder = { Text("DD/MM/YYYY") },
             trailingIcon = {
                 Icon(Icons.Default.DateRange, contentDescription = "Select date")

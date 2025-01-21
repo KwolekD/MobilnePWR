@@ -18,7 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.mobilnepwr.R
 import com.example.mobilnepwr.ui.navigation.ScaffoldViewModel
 import java.time.format.DateTimeFormatter
 
@@ -27,9 +29,10 @@ import java.time.format.DateTimeFormatter
 fun Dates(
     datesList: List<DateDetails>,
     scaffoldViewModel: ScaffoldViewModel,
-    viewModel: CourseDetailsViewModel
+    viewModel: CourseDetailsViewModel,
+    selectedTab: Int
 ) {
-    LaunchedEffect(Unit) {
+    LaunchedEffect(selectedTab) {
         scaffoldViewModel.updateState(
             showFab = false,
             navigationIcon = Icons.Default.Clear,
@@ -42,7 +45,7 @@ fun Dates(
             .fillMaxSize()
     ) {
         item {
-            Text(text = "Twoje obecności:", style = MaterialTheme.typography.titleLarge)
+            Text(text = stringResource(R.string.dates_tab_title), style = MaterialTheme.typography.titleLarge)
 //            if (datesList.isEmpty())
 //                Text(text = "Brak zajęć", style = MaterialTheme.typography.bodyMedium)
         }
