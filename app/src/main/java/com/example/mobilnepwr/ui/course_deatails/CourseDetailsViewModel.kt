@@ -18,7 +18,6 @@ import com.example.mobilnepwr.data.notes.NoteRepository
 import com.example.mobilnepwr.ui.course_deatails.deadline.toDeadline
 import com.example.mobilnepwr.ui.course_deatails.note.toNote
 import com.example.mobilnepwr.ui.navigation.CourseDetailsDestination
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -33,12 +32,10 @@ class CourseDetailsViewModel(
     private val notesRepository: NoteRepository,
     private val deadlineRepository: DeadlineRepository,
     private val dateRepository: DateRepository,
-    private val ImageRepository: ImageRepository
+    private val imageRepository: ImageRepository
 ) : ViewModel() {
 
     val courseId: Int = checkNotNull(savedStateHandle[CourseDetailsDestination.courseIdArg])
-
-    val photosList: Flow<List<Image>> = ImageRepository.getAllItemsStream()
 
     private val _courseUiState: MutableStateFlow<CourseDetailsUiState> =
         MutableStateFlow(CourseDetailsUiState())
@@ -52,7 +49,7 @@ class CourseDetailsViewModel(
                 deadlineRepository.getDeadlinesByCourseId(courseId),
                 notesRepository.getNotesByCourseId(courseId),
                 dateRepository.getDatesByCourseId(courseId),
-                ImageRepository.getImageByCourseId(courseId)
+                imageRepository.getImageByCourseId(courseId)
             ) { course, deadlines, notes, dates, image ->
                 _courseUiState.update {
                     it.copy(
@@ -98,7 +95,7 @@ class CourseDetailsViewModel(
         val path = saveImageToAppStorage(context, uri)
         if (path != null) {
             viewModelScope.launch {
-                ImageRepository.insertItem(
+                imageRepository.insertItem(
                     Image(
                         courseId = courseId,
                         filePath = path,
@@ -144,7 +141,7 @@ class CourseDetailsViewModel(
             file.delete()
         }
         viewModelScope.launch {
-            ImageRepository.deleteItem(image)
+            imageRepository.deleteItem(image)
         }
     }
 }

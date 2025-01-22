@@ -14,6 +14,6 @@ class DeadlineRepository(val deadlineDao: DeadlineDao) {
 
     suspend fun updateDeadline(item: Deadline) = deadlineDao.updateDeadline(item)
 
-    suspend fun getDeadlinesByCourseId(courseId: Int): Flow<List<Deadline>> =
+    fun getDeadlinesByCourseId(courseId: Int): Flow<List<Deadline>> =
         deadlineDao.getDeadlinesByCourseId(courseId)
 }

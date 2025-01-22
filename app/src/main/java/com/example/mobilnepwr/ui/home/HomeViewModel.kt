@@ -18,38 +18,37 @@ import java.util.Locale
 
 class HomeViewModel(
     private val courseRepository: CourseRepository,
-    private val dateRepository: DateRepository
+    private val dateRepository: DateRepository,
+    private val dateProvider: () -> LocalDate = { LocalDate.now() },
 ) : ViewModel() {
-    private val day = MutableStateFlow(LocalDate.now())
     private val _homeUiState = MutableStateFlow(HomeUiState())
+    val day = MutableStateFlow(dateProvider())
     val lazyListState = LazyListState()
     val homeUiState: StateFlow<HomeUiState> = _homeUiState
 
     init {
-        initializeHomeUiState(day.value)
+        initializeHomeUiState(startDate = day.value)
     }
 
-    private fun initializeHomeUiState(startDate: LocalDate = LocalDate.now(), animOption: Int = 0) {
+    private fun initializeHomeUiState(startDate: LocalDate = dateProvider(), animOption: Int = 0) {
         viewModelScope.launch {
             val firstDayOfWeek = getFirstDayOfWeek(startDate)
-            val weekDays = (0 until 6).map { offset ->
+            val weekDays = (0 until 7).map { offset ->
                 val currentDay = firstDayOfWeek.plusDays(offset.toLong())
                 val courses = courseRepository.getCoursesWithDateDetails(currentDay).first()
                 WeekDay(
                     name = currentDay.dayOfWeek.getDisplayName(
                         TextStyle.FULL,
-                        Locale("pl", "PL")
-                    ),
+                        Locale("pl", "PL")),
                     courses = courses,
-                    date = if (courses.isNotEmpty()) courses[0].date.toString() else ""
+                    date = currentDay.toString()
                 )
             }
             _homeUiState.value = HomeUiState(weekDays, animOption, weekDays.map {
-                if (LocalDate.now().dayOfWeek.getDisplayName(
-                        TextStyle.FULL,
-                        Locale("pl", "PL")
-                    ) == it.name && LocalDate.now() == day.value
-                ) true else false
+                dateProvider().dayOfWeek.getDisplayName(
+                    TextStyle.FULL,
+                    Locale("pl", "PL")
+                ) == it.name && dateProvider() == day.value
             })
         }
     }

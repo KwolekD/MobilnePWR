@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.mobilnepwr.data.courses.Course
 import com.example.mobilnepwr.ui.AppViewModelProvider
+import com.example.mobilnepwr.ui.course_deatails.CourseDetails
 
 
 @Composable
@@ -42,7 +42,7 @@ fun AllCoursesScreen(
 
 @Composable
 fun AllCoursesBody(
-    coursesList: List<Course>,
+    coursesList: List<CourseDetails>,
     onCourseClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)

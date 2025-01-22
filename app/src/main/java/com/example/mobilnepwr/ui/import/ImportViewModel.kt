@@ -1,6 +1,5 @@
 package com.example.mobilnepwr.ui.import
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -49,10 +48,8 @@ class ImportViewModel(
             Request.Builder().url(importUiState.importLink).build()
         } catch (e: IllegalArgumentException) {
             importUiState = importUiState.copy(showError = true)
-            Log.d("ImportViewModel", "Stan showError: ${importUiState.showError}")
             return
         }
-        Log.d("import", "działa")
         try {
             val response = withContext(Dispatchers.IO) { client.newCall(request).execute() }
             if (response.isSuccessful) {
@@ -74,19 +71,14 @@ class ImportViewModel(
 
                 } else {
                     importUiState = importUiState.copy(showError = true)
-                    Log.d("ImportViewModel", "Stan showError: ${importUiState.showError}")
                     return
                 }
             } else {
                 importUiState = importUiState.copy(showError = true)
-                Log.d("ImportViewModel", "Stan showError: ${importUiState.showError}")
                 return
             }
-            Log.d("import", response.message)
         } catch (e: Exception) {
-            e.message?.let { Log.e("Import", it) }
             importUiState = importUiState.copy(showError = true)
-            Log.d("ImportViewModel", "Stan showError: ${importUiState.showError}")
         }
     }
 

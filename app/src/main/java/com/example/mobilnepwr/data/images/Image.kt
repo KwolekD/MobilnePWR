@@ -10,3 +10,21 @@ data class Image(
     val courseId: Int,
     val filePath: String
 )
+
+data class ImageDetails(
+    val imageId: Int,
+    val courseId: Int,
+    val filePath: String
+)
+
+fun Image.toImageDetails() = ImageDetails(
+    imageId = imageId,
+    courseId = courseId,
+    filePath = filePath
+)
+
+fun ImageDetails.toImage() = Image(
+    imageId = imageId,
+    courseId = courseId,
+    filePath = filePath
+)
