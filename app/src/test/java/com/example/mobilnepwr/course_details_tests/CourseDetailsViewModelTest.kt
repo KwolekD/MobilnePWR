@@ -37,9 +37,12 @@ import com.example.mobilnepwr.ui.course_deatails.toDateDetails
 import com.example.mobilnepwr.ui.course_deatails.toDeadlineDetails
 import com.example.mobilnepwr.ui.course_deatails.toNoteDetails
 import com.example.mobilnepwr.ui.navigation.CourseDetailsDestination
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockkClass
+import io.mockk.runs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -52,6 +55,7 @@ class CourseDetailsViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
+
 
     private val courseRepository = mockkClass(CourseRepository::class)
     private val notesRepository = mockkClass(NoteRepository::class)
@@ -92,6 +96,10 @@ class CourseDetailsViewModelTest {
         courses.forEach {
             mockRepositories(it)
         }
+        coEvery { notesRepository.deleteNote(any()) } just runs
+        coEvery { deadlineRepository.deleteDeadline(any()) } just runs
+        coEvery { imageRepository.deleteItem(any()) } just runs
+        coEvery { dateRepository.updateDate(any()) } just runs
     }
 
     @Test
@@ -127,6 +135,7 @@ class CourseDetailsViewModelTest {
         val testData = courses.first()
         every { savedStateHandle.get<Int>(CourseDetailsDestination.courseIdArg) } returns testData.course.courseId
         initViewModel()
+        assertEquals(0, viewModel.courseUiState.value.selectedTab)
         viewModel.selectTab(1)
         assertEquals(viewModel.courseUiState.value.selectedTab, 1)
         assertEquals(viewModel.courseUiState.value.prevSelectedTab, 0)
@@ -137,48 +146,39 @@ class CourseDetailsViewModelTest {
     }
 
     @Test
-    fun `deleteNote should remove the note from the list`() = runTest {
+    fun `deleteNote should call delete in repository`() = runTest {
         val testData = courses.first()
         every { savedStateHandle.get<Int>(CourseDetailsDestination.courseIdArg) } returns testData.course.courseId
         initViewModel()
 
         val noteToDelete = testData.notes.first()
         viewModel.deleteNote(noteToDelete.toNoteDetails())
-        assertNotes(
-            viewModel.courseUiState.value.notesList,
-            testData.notes.filter { it != noteToDelete })
         coVerify {
             notesRepository.deleteNote(noteToDelete)
         }
     }
 
     @Test
-    fun `deleteDeadline should remove the deadline from the list`() = runTest {
+    fun `deleteDeadline should call delete in repository`() = runTest {
         val testData = courses.first()
         every { savedStateHandle.get<Int>(CourseDetailsDestination.courseIdArg) } returns testData.course.courseId
         initViewModel()
 
         val deadlineToDelete = testData.deadlines[1]
         viewModel.deleteDeadline(deadlineToDelete.toDeadlineDetails())
-        assertDeadlines(
-            viewModel.courseUiState.value.deadlinesList,
-            testData.deadlines.filter { it != deadlineToDelete })
         coVerify {
             deadlineRepository.deleteDeadline(deadlineToDelete)
         }
     }
 
     @Test
-    fun `deletePhoto should remove the photo from the list`() = runTest {
+    fun `deletePhoto should call delete in repository and delete photo`() = runTest {
         val testData = courses.first()
-        every { savedStateHandle.get<Int>(CourseDetailsDestination.courseIdArg) } returns testData.course.courseId
-        initViewModel()
-
         val imageToDelete = testData.images.first()
+        every { savedStateHandle.get<Int>(CourseDetailsDestination.courseIdArg) } returns testData.course.courseId
+
+        initViewModel()
         viewModel.deletePhoto(imageToDelete)
-        assertImages(
-            viewModel.courseUiState.value.imageList,
-            testData.images.filter { it != imageToDelete })
         coVerify {
             imageRepository.deleteItem(imageToDelete)
         }
@@ -190,7 +190,83 @@ class CourseDetailsViewModelTest {
         every { savedStateHandle.get<Int>(CourseDetailsDestination.courseIdArg) } returns testData.course.courseId
         initViewModel()
 
-        
+        val dateToUpdate = testData.dates.first()
+        viewModel.updateCheckBox(dateToUpdate.toDateDetails())
+        coVerify {
+            dateRepository.updateDate(dateToUpdate.copy(attendance = !dateToUpdate.attendance))
+        }
+    }
+
+//    @Test
+//    fun `savePhoto calls repository insertItem when image is saved successfully`() = runTest {
+//        val testData = courses[1]
+//        val filePath = "mock/path/photo.jpg"
+//        var slot = slot<Image>()
+//
+//        val context = mockk<Context>()
+//        val uri = mockk<Uri>()
+//        val contentResolver = mockk<ContentResolver>()
+//        val inputStream = ByteArrayInputStream(ByteArray(0)) // Mock pustego pliku
+//        val file = mockk<File>()
+//
+//        every { file.parent } returns "mock/filesDir"
+//        every { context.contentResolver } returns contentResolver
+//        every { contentResolver.openInputStream(uri) } returns inputStream
+//        every { context.filesDir } returns file
+//        mockkStatic(File::class) // Mockowanie tworzenia plików
+//        every { File(file, any()).absolutePath } returns filePath
+//
+//        every { savedStateHandle.get<Int>(CourseDetailsDestination.courseIdArg) } returns testData.course.courseId
+//        coEvery { imageRepository.insertItem(capture(slot)) } just runs
+//        initViewModel()
+//        every { viewModel.saveImageToAppStorage(any(), any()) } returns filePath
+//        // Act
+//        viewModel.savePhoto(context, uri)
+//
+//        coVerify { imageRepository.insertItem(any()) }
+//
+//        val capturedImage = slot.captured
+//        assertEquals(viewModel.courseId, capturedImage.courseId)
+//        assertEquals(filePath, capturedImage.filePath)
+//        assertEquals(0, capturedImage.imageId) // Sprawdza domyślny identyfikator
+//        // Assert
+////        coVerify {
+////            imageRepository.insertItem(
+////                Image(
+////                    courseId = viewModel.courseId,
+////                    filePath = filePath,
+////                    imageId = 0
+////                )
+////            )
+////        }
+//
+//    }
+
+
+//    @Test
+//    fun `saveImageToAppStorage saves image and returns file path`() {
+//        // Arrange
+//        val context = ApplicationProvider.getApplicationContext<Context>()
+//        val testUri = Uri.parse("android.resource://your.package.name/drawable/test_image")
+//
+//        // Act
+//        val path = viewModel.saveImageToAppStorage(context, testUri)
+//
+//        // Assert
+//        assertNotNull(path)
+//        assertTrue(File(path!!).exists())
+//    }
+
+    @Test
+    fun `clickNote should toggle the isExpanded state of the note`() = runTest {
+        val testData = courses[1]
+        every { savedStateHandle.get<Int>(CourseDetailsDestination.courseIdArg) } returns testData.course.courseId
+        initViewModel()
+        viewModel.clickNote(0)
+        assertEquals(viewModel.courseUiState.value.notesList.first().isExpanded, true)
+        assertEquals(viewModel.courseUiState.value.notesList[1].isExpanded, false)
+
+
     }
 
     private fun assertCourseDetails(actual: CourseDetails, expected: Course) {

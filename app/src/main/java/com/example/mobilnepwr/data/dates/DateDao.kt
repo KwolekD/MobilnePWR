@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 
 @Dao
 interface DateDao {
@@ -17,6 +18,12 @@ interface DateDao {
 
     @Update
     suspend fun updateDate(date: Date)
+
+    @Query("Select * FROM dates WHERE date > :date")
+    fun getGreaterThan(date: LocalDate): Flow<List<Date>>
+
+    @Query("Select * FROM dates WHERE date < :date")
+    fun getLessThan(date: LocalDate): Flow<List<Date>>
 
     @Query("SELECT * FROM dates WHERE courseId = :courseId")
     fun getDatesByCourseId(courseId: Int): Flow<List<Date>>

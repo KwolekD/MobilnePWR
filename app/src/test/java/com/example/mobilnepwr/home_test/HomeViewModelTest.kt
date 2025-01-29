@@ -1,7 +1,8 @@
-package com.example.mobilnepwr.home_tests
+package com.example.mobilnepwr.home_test
 
 import com.example.mobilnepwr.MainCoroutineRule
 import com.example.mobilnepwr.data.courses.CourseRepository
+import com.example.mobilnepwr.data.dates.Date
 import com.example.mobilnepwr.data.dates.DateRepository
 import com.example.mobilnepwr.ui.home.HomeViewModel
 import com.example.mobilnepwr.ui.home.toDate
@@ -44,10 +45,44 @@ class HomeViewModelTest {
                 HomeViewModelTestData.day5 -> HomeViewModelTestData.coursesForDay5
                 HomeViewModelTestData.day6 -> HomeViewModelTestData.coursesForDay6
                 HomeViewModelTestData.day7 -> HomeViewModelTestData.coursesForDay7
+                HomeViewModelTestData.coursesForNextWeek[0].date -> HomeViewModelTestData.coursesForNextWeek
+                HomeViewModelTestData.coursesForPevWeek[0].date -> HomeViewModelTestData.coursesForPevWeek
                 else -> emptyList()
             }
             flowOf(courses)
         }
+
+        every { dateRepository.getLessThan(HomeViewModelTestData.day1) } returns flowOf(
+            listOf(
+                Date(
+                    courseId = 1,
+                    date = HomeViewModelTestData.day1,
+                    attendance = true,
+                    startTime = "10:00",
+                    endTime = "12:00"
+                )
+            )
+        )
+
+        every { dateRepository.getLessThan(HomeViewModelTestData.day1.minusWeeks(1)) } returns flowOf(
+            emptyList()
+        )
+
+
+        every { dateRepository.getGreaterThan(HomeViewModelTestData.day1) } returns flowOf(
+            listOf(
+                Date(
+                    courseId = 1,
+                    date = HomeViewModelTestData.day1,
+                    attendance = true,
+                    startTime = "10:00",
+                    endTime = "12:00",
+                )
+            )
+        )
+        every { dateRepository.getGreaterThan(HomeViewModelTestData.day1.plusWeeks(1)) } returns flowOf(
+            emptyList()
+        )
 
     }
 
@@ -137,18 +172,26 @@ class HomeViewModelTest {
     @Test
     fun `nextWeek should update day and initializeHomeUiState`() = runTest {
         viewModel = HomeViewModel(courseRepository, dateRepository) { HomeViewModelTestData.day1 }
+        var oldState = viewModel.homeUiState.value
         viewModel.nextWeek()
         assertEquals(viewModel.day.value, HomeViewModelTestData.day1.plusWeeks(1))
+        assertFalse(viewModel.homeUiState.value == oldState)
+        oldState = viewModel.homeUiState.value
         viewModel.nextWeek()
-        assertEquals(viewModel.day.value, HomeViewModelTestData.day1.plusWeeks(2))
+        assertEquals(viewModel.day.value, HomeViewModelTestData.day1.plusWeeks(1))
+        assertEquals(oldState, viewModel.homeUiState.value)
     }
 
     @Test
     fun `previousWeek should update day and initializeHomeUiState`() = runTest {
         viewModel = HomeViewModel(courseRepository, dateRepository) { HomeViewModelTestData.day1 }
+        var oldState = viewModel.homeUiState.value
         viewModel.previousWeek()
         assertEquals(viewModel.day.value, HomeViewModelTestData.day1.minusWeeks(1))
+        assertFalse(viewModel.homeUiState.value == oldState)
+        oldState = viewModel.homeUiState.value
         viewModel.previousWeek()
-        assertEquals(viewModel.day.value, HomeViewModelTestData.day1.minusWeeks(2))
+        assertEquals(viewModel.day.value, HomeViewModelTestData.day1.minusWeeks(1))
+        assertEquals(oldState, viewModel.homeUiState.value)
     }
 }

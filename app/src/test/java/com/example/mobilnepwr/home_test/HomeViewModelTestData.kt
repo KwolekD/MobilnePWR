@@ -1,4 +1,4 @@
-package com.example.mobilnepwr.home_tests
+package com.example.mobilnepwr.home_test
 
 import com.example.mobilnepwr.data.courses.CourseWithDateDetails
 import java.time.LocalDate
@@ -26,7 +26,7 @@ object HomeViewModelTestData {
         CourseWithDateDetails(
             name = "Polski",
             type = "P",
-            dateId = 1,
+            dateId = 2,
             courseId = 2,
             date = day1,
             attendance = false,
@@ -36,7 +36,7 @@ object HomeViewModelTestData {
         CourseWithDateDetails(
             name = "Angielski",
             type = "C",
-            dateId = 1,
+            dateId = 3,
             courseId = 3,
             date = day1,
             attendance = true,
@@ -50,7 +50,7 @@ object HomeViewModelTestData {
         CourseWithDateDetails(
             name = "Matematyka",
             type = "C",
-            dateId = 2,
+            dateId = 4,
             courseId = 4,
             date = day3,
             attendance = true,
@@ -62,7 +62,7 @@ object HomeViewModelTestData {
         CourseWithDateDetails(
             name = "Matematyka",
             type = "P",
-            dateId = 3,
+            dateId = 5,
             courseId = 5,
             date = day4,
             attendance = true,
@@ -72,7 +72,7 @@ object HomeViewModelTestData {
         CourseWithDateDetails(
             name = "Fizyka",
             type = "W",
-            dateId = 3,
+            dateId = 6,
             courseId = 6,
             date = day4,
             attendance = true,
@@ -85,7 +85,7 @@ object HomeViewModelTestData {
         CourseWithDateDetails(
             name = "Fizyka",
             type = "C",
-            dateId = 4,
+            dateId = 7,
             courseId = 7,
             date = day5,
             attendance = true,
@@ -95,4 +95,31 @@ object HomeViewModelTestData {
     )
     val coursesForDay6 = listOf<CourseWithDateDetails>()
     val coursesForDay7 = listOf<CourseWithDateDetails>()
+
+    val coursesForPevWeek = listOf(
+        CourseWithDateDetails(
+            name = "Fizyka",
+            type = "C",
+            dateId = 8,
+            courseId = 7,
+            date = day5,
+            attendance = true,
+            startTime = "10:00",
+            endTime = "12:00",
+        )
+    )
+
+    val coursesForNextWeek = listOf(
+        CourseWithDateDetails(
+            name = "Matematyka",
+            type = "C",
+            dateId = 9,
+            courseId = 7,
+            date = day5,
+            attendance = true,
+            startTime = "10:00",
+            endTime = "12:00",
+        )
+    )
+
 }

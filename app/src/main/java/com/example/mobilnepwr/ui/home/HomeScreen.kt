@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -15,7 +14,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.animation.with
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -56,7 +55,6 @@ import com.example.mobilnepwr.R
 import com.example.mobilnepwr.data.courses.CourseWithDateDetails
 import com.example.mobilnepwr.ui.AppViewModelProvider
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -64,6 +62,8 @@ fun HomeScreen(
     contentPadding: PaddingValues,
     navigateToCourseDetails: (Int) -> Unit
 ) {
+
+
     val homeUiState by viewModel.homeUiState.collectAsState()
 
     Column(
@@ -120,7 +120,7 @@ fun HomeScreen(
                         }
 
                         else -> {
-                            EnterTransition.None togetherWith  ExitTransition.None
+                            EnterTransition.None togetherWith ExitTransition.None
                         }
                     }.using(
                         SizeTransform(clip = false)
@@ -241,7 +241,8 @@ fun CourseList(
                             checked = course.attendance,
                             onCheckedChange = { clickCheckBox(course) },
                             colors = CheckboxDefaults.colors()
-                                .copy(checkedBoxColor = MaterialTheme.colorScheme.primary)
+                                .copy(checkedBoxColor = MaterialTheme.colorScheme.primary),
+                            modifier = Modifier.testTag("checkbox$index")
                         )
                     },
                     colors = ListItemDefaults.colors(

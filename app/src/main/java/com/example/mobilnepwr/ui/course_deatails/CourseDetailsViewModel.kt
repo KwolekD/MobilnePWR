@@ -34,7 +34,6 @@ class CourseDetailsViewModel(
     private val dateRepository: DateRepository,
     private val imageRepository: ImageRepository
 ) : ViewModel() {
-
     val courseId: Int = checkNotNull(savedStateHandle[CourseDetailsDestination.courseIdArg])
 
     private val _courseUiState: MutableStateFlow<CourseDetailsUiState> =
@@ -106,7 +105,7 @@ class CourseDetailsViewModel(
         }
     }
 
-    fun saveImageToAppStorage(context: Context, uri: Uri): String? {
+    private fun saveImageToAppStorage(context: Context, uri: Uri): String? {
         return try {
             val inputStream = context.contentResolver.openInputStream(uri)
             val photoFile = File(context.filesDir, "photo_${System.currentTimeMillis()}.jpg")

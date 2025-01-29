@@ -58,16 +58,18 @@ class EditDeadlineViewModel(
     }
 
     suspend fun updateDeadline() {
-        viewModelScope.launch {
+        if (_editDeadlineUiState.value.isEntryValid) {
             deadlineRepository.updateDeadline(
                 _editDeadlineUiState.value.deadlineDetails.toDeadline()
             )
         }
+
+
     }
 
-    fun validateInput(deadlineDetails: DeadlineDetails): Boolean {
+    private fun validateInput(deadlineDetails: DeadlineDetails): Boolean {
         return with(deadlineDetails) {
-            title.isNotBlank() && date != null && description.isNotBlank()
+            title.isNotBlank() && description.isNotBlank()
         }
     }
 }

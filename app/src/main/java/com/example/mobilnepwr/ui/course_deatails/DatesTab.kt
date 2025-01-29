@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.mobilnepwr.R
@@ -45,7 +46,10 @@ fun Dates(
             .fillMaxSize()
     ) {
         item {
-            Text(text = stringResource(R.string.dates_tab_title), style = MaterialTheme.typography.titleLarge)
+            Text(
+                text = stringResource(R.string.dates_tab_title),
+                style = MaterialTheme.typography.titleLarge
+            )
 //            if (datesList.isEmpty())
 //                Text(text = "Brak zajęć", style = MaterialTheme.typography.bodyMedium)
         }
@@ -65,13 +69,13 @@ fun Dates(
                 )
                 {
                     Text(
-                        text = date.date.format(DateTimeFormatter.ofPattern("DD-MM-yyyy")),
+                        text = date.date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")),
                         style = MaterialTheme.typography.titleMedium
                     )
                     Checkbox(
                         checked = date.attendance,
                         onCheckedChange = { viewModel.updateCheckBox(date) },
-                        modifier = Modifier
+                        modifier = Modifier.testTag("checkbox${date.dateId}")
                     )
                 }
             }

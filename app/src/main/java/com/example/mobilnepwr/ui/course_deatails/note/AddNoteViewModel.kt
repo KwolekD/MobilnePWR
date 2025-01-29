@@ -9,7 +9,6 @@ import com.example.mobilnepwr.ui.navigation.AddNoteDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
 class AddNoteViewModel(
     savedStateHandle: SavedStateHandle,
@@ -25,7 +24,7 @@ class AddNoteViewModel(
         _uiState.value =
             AddNoteUiState(noteDetails = noteDetails, isEntryValid = validateInput(noteDetails))
     }
-    
+
 
     suspend fun saveNote() {
         if (_uiState.value.isEntryValid) {
@@ -34,7 +33,7 @@ class AddNoteViewModel(
 
     }
 
-    fun validateInput(noteDetails: NoteDetails): Boolean {
+    private fun validateInput(noteDetails: NoteDetails): Boolean {
         return with(noteDetails) {
             title.isNotBlank() && content.isNotBlank()
         }

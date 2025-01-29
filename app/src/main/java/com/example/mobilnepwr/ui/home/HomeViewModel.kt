@@ -30,6 +30,7 @@ class HomeViewModel(
         initializeHomeUiState(startDate = day.value)
     }
 
+
     private fun initializeHomeUiState(startDate: LocalDate = dateProvider(), animOption: Int = 0) {
         viewModelScope.launch {
             val firstDayOfWeek = getFirstDayOfWeek(startDate)
@@ -39,7 +40,8 @@ class HomeViewModel(
                 WeekDay(
                     name = currentDay.dayOfWeek.getDisplayName(
                         TextStyle.FULL,
-                        Locale("pl", "PL")),
+                        Locale("pl", "PL")
+                    ),
                     courses = courses,
                     date = currentDay.toString()
                 )
@@ -65,13 +67,21 @@ class HomeViewModel(
     }
 
     fun nextWeek() {
-        day.value = day.value.plusWeeks(1)
-        initializeHomeUiState(day.value, 1)
+        viewModelScope.launch {
+            if (dateRepository.getGreaterThan(day.value).first().isNotEmpty()) {
+                day.value = day.value.plusWeeks(1)
+                initializeHomeUiState(day.value, 1)
+            }
+        }
     }
 
     fun previousWeek() {
-        day.value = day.value.minusWeeks(1)
-        initializeHomeUiState(day.value, 2)
+        viewModelScope.launch {
+            if (dateRepository.getLessThan(day.value).first().isNotEmpty()) {
+                day.value = day.value.minusWeeks(1)
+                initializeHomeUiState(day.value, 2)
+            }
+        }
     }
 
     fun clickCheckBox(courseWithDateDetails: CourseWithDateDetails) {

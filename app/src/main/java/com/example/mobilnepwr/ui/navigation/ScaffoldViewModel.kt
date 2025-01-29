@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class ScaffoldViewModel : ViewModel() {
+open class ScaffoldViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(ScaffoldState())
     val uiState = _uiState.asStateFlow()
 
-    fun updateState(
+    open fun updateState(
         showFab: Boolean = _uiState.value.showFab,
         iconFab: ImageVector = _uiState.value.iconFab,
         title: String = "",

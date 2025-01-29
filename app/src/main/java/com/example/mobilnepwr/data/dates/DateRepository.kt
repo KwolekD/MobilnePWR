@@ -1,17 +1,16 @@
 package com.example.mobilnepwr.data.dates
 
 
+import android.util.Log
 import biweekly.ICalendar
 import biweekly.property.Summary
 import com.example.mobilnepwr.data.courses.Course
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 
 class DateRepository(private val dateDao: DateDao) {
-    fun getAllDatesStream(): Flow<List<Date>> = dateDao.getAllDates()
-
-    fun getDateStream(id: Int): Flow<Date?> = dateDao.getDate(id)
     fun getDatesByCourseId(courseId: Int): Flow<List<Date>> =
         dateDao.getDatesByCourseId(courseId)
 
@@ -21,6 +20,9 @@ class DateRepository(private val dateDao: DateDao) {
 
     suspend fun updateDate(item: Date) = dateDao.updateDate(item)
 
+    fun getGreaterThan(date: LocalDate): Flow<List<Date>> = dateDao.getGreaterThan(date)
+    fun getLessThan(date: LocalDate): Flow<List<Date>> = dateDao.getLessThan(date)
+
 
     suspend fun importDatesFromIcal(ical: ICalendar, courses: List<Course>) {
         ical.events.forEach { event ->
@@ -29,6 +31,8 @@ class DateRepository(private val dateDao: DateDao) {
                 LocalDateTime.ofInstant(dateTimeStart.toInstant(), ZoneId.systemDefault())
             val timeStart = localDateTimeStart.toLocalTime().toString()
             val dateStart = localDateTimeStart.toLocalDate()
+            print(dateStart.toString())
+            Log.d("DateRepository", "dateStart: $dateStart")
 
 
             val dateTimeEnd = event.dateEnd.value

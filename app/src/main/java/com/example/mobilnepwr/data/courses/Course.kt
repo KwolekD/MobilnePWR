@@ -6,14 +6,11 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "courses",
-    indices = [Index(value = ["name","type"], unique = true)])
-data class  Course(
+    indices = [Index(value = ["name", "type"], unique = true)]
+)
+data class Course(
     @PrimaryKey(autoGenerate = true) val courseId: Int = 0,
     val name: String,
-//    val timeStart: String,
-//    val timeEnd: String,
-//    val day: String,
-//    val instructor: String,
     val type: String,
     val address: String,
     val building: String,

@@ -47,14 +47,14 @@ class EditNoteViewModel(
 
 
     suspend fun updateNote() {
-        viewModelScope.launch {
+        if (noteEditUiState.value.isEntryValid)
             noteRepository.updateNote(
                 _noteEditUiState.value.noteDetails.toNote()
             )
-        }
+
     }
 
-    fun validateInput(noteDetails: NoteDetails): Boolean {
+    private fun validateInput(noteDetails: NoteDetails): Boolean {
         return with(noteDetails) {
             title.isNotBlank() && content.isNotBlank()
         }

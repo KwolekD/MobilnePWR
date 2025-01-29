@@ -6,7 +6,7 @@ import java.time.LocalDate
 
 @Entity(tableName = "deadlines")
 data class Deadline(
-    @PrimaryKey(autoGenerate = true) val deadlineId: Int,
+    @PrimaryKey(autoGenerate = true) val deadlineId: Int = 0,
     val courseId: Int,
     val title: String,
     val date: LocalDate,
